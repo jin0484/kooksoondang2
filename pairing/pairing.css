@@ -152,6 +152,8 @@
 
 .pairing_page .pairing_questionnaire {
     --pairing-question-tab-width: clamp(5.25rem, 7.813vw, 9.375rem);
+    /* 내용 너비를 펼쳐진 패널 기준(cqw)으로 고정해서, 패널이 넓어지는 동안 줄바꿈·높이가 출렁이지 않게 함 */
+    container-type: inline-size;
     display: flex;
     align-items: stretch;
     width: min(90%, 96.75rem);
@@ -188,10 +190,6 @@
     background: var(--pairing-question-color);
 }
 
-.pairing_page .pairing_question_panel.is_collapsed .pairing_question_content {
-    display: none;
-}
-
 .pairing_page .pairing_question_panel,
 .pairing_page #food_pairing {
     scroll-margin-top: 6rem;
@@ -202,6 +200,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    box-sizing: border-box;
+    width: calc(100cqw - 3 * var(--pairing-question-tab-width));
     min-width: 0;
     min-height: 100%;
     padding: clamp(1.5rem, 2.083vw, 2.5rem) clamp(2.25rem, 10.417vw, 12.5rem);
@@ -1656,7 +1656,8 @@
     }
     .pairing_page .pairing_question_panel.is_open,
     .pairing_page .pairing_question_panel.is_collapsed { height: auto; }
-    .pairing_page .pairing_question_content { padding: 1.25rem 1rem; }
+    .pairing_page .pairing_question_content { width: auto; padding: 1.25rem 1rem; }
+    .pairing_page .pairing_question_panel.is_collapsed .pairing_question_content { display: none; }
     .pairing_page .pairing_question_tab {
         position: relative;
         flex-direction: row;
