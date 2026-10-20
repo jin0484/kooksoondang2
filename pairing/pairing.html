@@ -127,15 +127,7 @@
           <p>Find the Kooksoondang drink that best matches your taste.</p>
         </header>
 
-        <div class="pairing_question_progress" aria-live="polite" aria-atomic="true">
-          <div class="pairing_progress_heading">
-            <p class="pairing_progress_title">Your quiz progress</p>
-            <p id="pairing_question_status">0 of 4 answered</p>
-          </div>
-          <progress class="pairing_sr_only" id="pairing_question_progress" max="4" value="0" aria-label="Answered questions"></progress>
-          <ol class="pairing_progress_steps" id="pairing_progress_steps" aria-label="Question completion"></ol>
-          <p class="pairing_question_hint pairing_sr_only" id="pairing_question_hint">Answer all 4 questions to reveal your drink match.</p>
-        </div>
+        <p class="pairing_question_hint pairing_sr_only" id="pairing_question_hint" aria-live="polite">Answer all 4 questions to reveal your drink match.</p>
         <div class="pairing_questionnaire" id="pairing_questionnaire" aria-describedby="pairing_question_hint"></div>
       </div>
     </section>
@@ -197,25 +189,6 @@
       </div>
     </section>
   </main>
-
-  <nav class="pairing_section_nav" aria-label="Pairing section shortcuts">
-    <span class="pairing_section_nav_heading" aria-hidden="true">EXPLORE</span>
-    <a href="#find_your_drink" aria-label="01 — Find Your Drink">
-      <svg class="pairing_nav_cup" viewBox="0 0 48 48" aria-hidden="true"><path d="M5 8H43L41.5 25C40.8 33 36 38 31 39V43H17V39C12 38 7.2 33 6.5 25Z"/></svg>
-      <span class="pairing_nav_number" aria-hidden="true">01</span>
-      <span class="pairing_nav_tooltip" aria-hidden="true">Find Your Drink</span>
-    </a>
-    <a href="#food_pairing" aria-label="02 — Food Pairing">
-      <svg class="pairing_nav_cup" viewBox="0 0 48 48" aria-hidden="true"><path d="M5 8H43L41.5 25C40.8 33 36 38 31 39V43H17V39C12 38 7.2 33 6.5 25Z"/></svg>
-      <span class="pairing_nav_number" aria-hidden="true">02</span>
-      <span class="pairing_nav_tooltip" aria-hidden="true">Food Pairing</span>
-    </a>
-    <a href="#drink_recipes" aria-label="03 — Drink Recipes">
-      <svg class="pairing_nav_cup" viewBox="0 0 48 48" aria-hidden="true"><path d="M5 8H43L41.5 25C40.8 33 36 38 31 39V43H17V39C12 38 7.2 33 6.5 25Z"/></svg>
-      <span class="pairing_nav_number" aria-hidden="true">03</span>
-      <span class="pairing_nav_tooltip" aria-hidden="true">Drink Recipes</span>
-    </a>
-  </nav>
 
   <!-- 세 페이지가 함께 쓰는 TOP 버튼. 모양은 common.css, 동작은 common.js 가 맡음 -->
   <button class="site_top_button" type="button" aria-label="Back to top" data-top-button>
