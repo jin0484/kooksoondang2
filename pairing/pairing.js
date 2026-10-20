@@ -413,21 +413,6 @@
         }
 
         const canShowResult = areAllQuestionsAnswered();
-        const completed = questions.filter((question) => state.answers[question.id]).length;
-        document.querySelector('#pairing_question_status').textContent = `${completed} of ${questions.length} answered`;
-        document.querySelector('#pairing_question_progress').value = completed;
-        document.querySelector('#pairing_progress_steps').innerHTML = questions.map((question, index) => {
-            const answered = Boolean(state.answers[question.id]);
-            const current = index === state.activeQuestionIndex;
-            return `<li class="pairing_progress_step${answered ? ' is_answered' : ''}"${current ? ' aria-current="step"' : ''}>
-                <span class="pairing_progress_step_label">
-                    <span>${question.label}</span>
-                    <span class="pairing_progress_step_name">${question.shortLabel}</span>
-                    <span class="pairing_progress_step_mark" aria-hidden="true">${answered ? '✓' : current ? '●' : ''}</span>
-                </span>
-                <span class="pairing_progress_step_state pairing_sr_only">${answered ? 'Done' : current ? 'Current' : 'To do'}</span>
-            </li>`;
-        }).join('');
         const missing = questions.filter((question) => !state.answers[question.id]).map((question) => question.label);
         document.querySelector('#pairing_question_hint').textContent = canShowResult
             ? 'All set! Open Q4 and choose View Result to see your match.'
@@ -1193,34 +1178,6 @@
         image.classList.add('has_error');
         image.alt = 'Image unavailable. Please refresh the page.';
     }, true);
-
-    // Keep the fixed shortcuts in sync with both manual scrolling and anchor navigation.
-    const sectionLinks = [...document.querySelectorAll('.pairing_section_nav a')];
-    const linkedSections = sectionLinks.map((link) => document.querySelector(link.getAttribute('href')));
-    let sectionNavFrame = null;
-    function updateSectionNavigation() {
-        sectionNavFrame = null;
-        const readingLine = Math.max(100, window.innerHeight * 0.3);
-        let activeIndex = -1;
-        linkedSections.forEach((section, index) => {
-            if (section && section.getBoundingClientRect().top <= readingLine) activeIndex = index;
-        });
-        sectionLinks.forEach((link, index) => {
-            if (index === activeIndex) link.setAttribute('aria-current', 'location');
-            else link.removeAttribute('aria-current');
-        });
-    }
-    function scheduleSectionNavigation() {
-        if (sectionNavFrame === null) sectionNavFrame = requestAnimationFrame(updateSectionNavigation);
-    }
-    window.addEventListener('scroll', scheduleSectionNavigation, { passive: true });
-    window.addEventListener('resize', scheduleSectionNavigation, { passive: true });
-    window.addEventListener('load', scheduleSectionNavigation, { once: true });
-    if ('ResizeObserver' in window) {
-        const sectionObserver = new ResizeObserver(scheduleSectionNavigation);
-        linkedSections.forEach((section) => { if (section) sectionObserver.observe(section); });
-    }
-    updateSectionNavigation();
 
     renderQuestionnaire();
     renderFoodCards();
