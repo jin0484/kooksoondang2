@@ -396,8 +396,8 @@
     color: inherit;
     font-size: clamp(1rem, 1.25vw, 1.5rem);
     font-weight: 400;
+    /* 위에서 아래로 읽히게 (사이트의 다른 세로 글씨와 같은 방향) */
     writing-mode: vertical-rl;
-    transform: rotate(180deg);
 }
 
 .pairing_page .pairing_food_section {
@@ -1675,7 +1675,6 @@
     .pairing_page .pairing_question_panel.is_open .pairing_question_tab { display: none; }
     .pairing_page .pairing_question_tab .pairing_question_prompt {
         writing-mode: horizontal-tb;
-        transform: none;
         font-size: 0.9375rem;
     }
     .pairing_page .pairing_question_number { font-size: 1.125rem; }
