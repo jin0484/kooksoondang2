@@ -73,8 +73,7 @@
 
 .pairing_page .pairing_hero_dot { color: var(--pairing-orange); }
 
-.pairing_page .pairing_eyebrow,
-.pairing_page .pairing_section_heading .pairing_eyebrow {
+.pairing_page .pairing_eyebrow {
     margin: 0 0 1.125rem;
     color: var(--pairing-green);
     font-size: 0.75rem;
@@ -173,12 +172,18 @@
     min-width: 0;
     overflow: hidden;
     background: var(--pairing-paper);
-    transition: flex-basis 520ms cubic-bezier(0.22, 1, 0.36, 1), background-color 260ms ease;
+    transition: flex-basis 520ms cubic-bezier(0.22, 1, 0.36, 1), background-color 260ms ease, border-color 260ms ease;
     will-change: flex-basis;
 }
 
 .pairing_page .pairing_question_panel + .pairing_question_panel {
     border-left: 1px solid var(--pairing-line);
+}
+
+/* 색 칸끼리 붙은 곳은 회색 선을 숨김. 선 두께는 남겨 둬서 칸 너비가 바뀌지 않게 하고,
+   투명해진 자리에는 칸 자신의 색이 비쳐 보임 (모바일 위쪽 선도 함께) */
+.pairing_page .pairing_question_panel.is_collapsed + .pairing_question_panel.is_collapsed {
+    border-color: transparent;
 }
 
 .pairing_page .pairing_question_panel.is_open {
@@ -397,8 +402,8 @@
     color: inherit;
     font-size: clamp(1rem, 1.25vw, 1.5rem);
     font-weight: 400;
+    /* 위에서 아래로 읽히게 (사이트의 다른 세로 글씨와 같은 방향) */
     writing-mode: vertical-rl;
-    transform: rotate(180deg);
 }
 
 .pairing_page .pairing_food_section {
@@ -1637,8 +1642,7 @@
     .pairing_page .pairing_hero_actions { margin-top: 1.5rem; gap: 0.75rem; }
     .pairing_page .pairing_primary_link { min-height: 3.25rem; padding: 0.75rem 1.25rem; }
     .pairing_page .pairing_hero_note { font-size: 0.75rem; }
-    .pairing_page .pairing_eyebrow,
-    .pairing_page .pairing_section_heading .pairing_eyebrow { font-size: 0.6875rem; margin-bottom: 0.875rem; }
+    .pairing_page .pairing_eyebrow { font-size: 0.6875rem; margin-bottom: 0.875rem; }
     .pairing_page .pairing_section { padding-block: clamp(3.75rem, 16vw, 5rem); }
     .pairing_page .pairing_section_heading h2 { font-size: clamp(2rem, 10vw, 2.25rem); }
     .pairing_page .pairing_section_heading p { font-size: 1rem; line-height: 1.6; }
@@ -1655,11 +1659,14 @@
         min-height: 0;
         height: auto;
         border-left: 0;
-        transition: background-color 220ms ease;
+        transition: background-color 220ms ease, border-color 220ms ease;
     }
     .pairing_page .pairing_question_panel + .pairing_question_panel {
         border-top: 1px solid var(--pairing-line);
         border-left: 0;
+    }
+    .pairing_page .pairing_question_panel.is_collapsed + .pairing_question_panel.is_collapsed {
+        border-top-color: transparent;
     }
     .pairing_page .pairing_question_panel.is_open,
     .pairing_page .pairing_question_panel.is_collapsed { height: auto; }
@@ -1677,7 +1684,6 @@
     .pairing_page .pairing_question_panel.is_open .pairing_question_tab { display: none; }
     .pairing_page .pairing_question_tab .pairing_question_prompt {
         writing-mode: horizontal-tb;
-        transform: none;
         font-size: 0.9375rem;
     }
     .pairing_page .pairing_question_number { font-size: 1.125rem; }
