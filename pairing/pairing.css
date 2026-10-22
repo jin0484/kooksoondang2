@@ -172,12 +172,18 @@
     min-width: 0;
     overflow: hidden;
     background: var(--pairing-paper);
-    transition: flex-basis 520ms cubic-bezier(0.22, 1, 0.36, 1), background-color 260ms ease;
+    transition: flex-basis 520ms cubic-bezier(0.22, 1, 0.36, 1), background-color 260ms ease, border-color 260ms ease;
     will-change: flex-basis;
 }
 
 .pairing_page .pairing_question_panel + .pairing_question_panel {
     border-left: 1px solid var(--pairing-line);
+}
+
+/* 색 칸끼리 붙은 곳은 회색 선을 숨김. 선 두께는 남겨 둬서 칸 너비가 바뀌지 않게 하고,
+   투명해진 자리에는 칸 자신의 색이 비쳐 보임 (모바일 위쪽 선도 함께) */
+.pairing_page .pairing_question_panel.is_collapsed + .pairing_question_panel.is_collapsed {
+    border-color: transparent;
 }
 
 .pairing_page .pairing_question_panel.is_open {
@@ -1653,11 +1659,14 @@
         min-height: 0;
         height: auto;
         border-left: 0;
-        transition: background-color 220ms ease;
+        transition: background-color 220ms ease, border-color 220ms ease;
     }
     .pairing_page .pairing_question_panel + .pairing_question_panel {
         border-top: 1px solid var(--pairing-line);
         border-left: 0;
+    }
+    .pairing_page .pairing_question_panel.is_collapsed + .pairing_question_panel.is_collapsed {
+        border-top-color: transparent;
     }
     .pairing_page .pairing_question_panel.is_open,
     .pairing_page .pairing_question_panel.is_collapsed { height: auto; }
