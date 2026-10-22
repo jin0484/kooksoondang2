@@ -18,7 +18,6 @@
     --bg_color: #FAF8F7;
 
     --kooksoondang_orange: #F29556;
-    --kooksoondang_lighter: #FFD7BB;
     --bekseju_darker_cold: #232323;
     --bekseju_dark1: #4C3B33;
     --bekseju_dark3: #8D7E77;
@@ -50,61 +49,8 @@ button {
     cursor: pointer;
 }
 
-/* ---------- 인트로 영상 ---------- */
-/* 영상 한 장만 있는 화면. 화면 높이에 꽉 채우고 넘치는 쪽은 잘라 냄 */
-
-.intro {
-    position: relative;
-}
-
-/* 인증 화면으로 넘어가면 영상 쪽은 통째로 빠짐 */
-.intro[hidden] {
-    display: none;
-}
-
-/* 모서리는 사이트 공통 규칙(위 평평 / 아래 둥금)을 따름 */
-.intro_skip {
-    position: absolute;
-    top: clamp(1rem, 2.5vw, 2rem);
-    right: 100px;
-    z-index: 1;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    /* 글자 크기는 그대로 두고 여백만 늘려 칩 크기를 10% 키움 (74.6x30 -> 82.1x33) */
-    padding: 0.594rem 1.36rem;
-    border-radius: 0.25rem 0.25rem 1rem 1rem;
-    background: var(--kooksoondang_lighter);
-    /* 두 배경 모두 밝은 톤이라 글자는 어두운 쪽이어야 읽힘 */
-    color: var(--bekseju_darker_cold);
-    font-size: 0.875rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    transition: background 220ms ease, transform 220ms ease;
-}
-
-.intro_skip:hover {
-    background: var(--kooksoondang_orange);
-    transform: translateY(-0.1rem);
-}
-
-.intro_skip:focus-visible {
-    outline: 2px solid var(--kooksoondang_orange);
-    outline-offset: 3px;
-}
-
-.intro_video {
-    display: block;
-    width: 100%;
-    /* 주소창이 접혔다 펴지는 모바일에서 100vh 가 튀므로 지원하면 100dvh 를 씀 */
-    height: 100vh;
-    height: 100dvh;
-    object-fit: cover;
-    background: var(--bg_color);
-}
-
 /* ---------- 19세 인증 ---------- */
-/* 영상이 끝나면 드러남. 화면을 꽉 채우고, 아래쪽은 완만한 곡선으로 색을 나눔 */
+/* 페이지를 열면 바로 보임. 화면을 꽉 채우고, 아래쪽은 완만한 곡선으로 색을 나눔 */
 
 .age_gate {
     position: relative;
@@ -273,13 +219,11 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
 
-    .intro_skip,
     .age_gate_btn,
     .age_gate_back {
         transition: none;
     }
 
-    .intro_skip:hover,
     .age_gate_btn:hover {
         transform: none;
     }
@@ -292,10 +236,6 @@ button {
 /* ---------- 태블릿 (<= 768px) ---------- */
 
 @media (max-width: 48rem) {
-    .intro_skip {
-        right: 2.5rem;
-    }
-
     .age_gate_curve {
         height: 40%;
     }
@@ -309,10 +249,6 @@ button {
 /* 360px 기준. 글 묶음을 위로 올려 로고와 겹치지 않게 함 */
 
 @media (max-width: 30rem) {
-    .intro_skip {
-        right: 1rem;
-    }
-
     .age_gate {
         align-items: flex-start;
         padding: 0 1rem;

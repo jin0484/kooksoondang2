@@ -38,20 +38,11 @@
 </head>
 
 <body>
-    <div class="intro">
-        <!-- muted 가 있어야 브라우저가 자동 재생을 허용하고, playsinline 이 있어야 ios 에서 전체 화면으로 튀지 않음.
-             끝나면 인증 화면으로 넘어가야 하므로 loop 는 두지 않음 -->
-        <video class="intro_video" src="asset/video/kooksoondang_intro.mp4" autoplay muted playsinline
-            preload="auto"></video>
-        <!-- 영상만 건너뜀. 인증은 건너뛸 수 없으므로 링크가 아니라 버튼임 -->
-        <button type="button" class="intro_skip">Skip &rsaquo;</button>
-    </div>
-
     <!--
-        19세 인증. 영상이 끝나면 index.js 가 hidden 을 떼어 드러냄.
+        19세 인증. 페이지를 열면 바로 보임.
         data-pass = YES 를 눌렀을 때 갈 곳
     -->
-    <section class="age_gate" id="age_gate" data-pass="test/test.html" hidden>
+    <section class="age_gate" id="age_gate" data-pass="test/test.html">
         <div class="age_gate_curve" aria-hidden="true"></div>
 
         <div class="age_gate_inner">
