@@ -465,8 +465,7 @@
     display: none;
 }
 
-.pairing_page .pairing_carousel_arrow,
-.pairing_page .pairing_recipe_arrow {
+.pairing_page .pairing_carousel_arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -480,14 +479,12 @@
     transition: background-color 160ms ease, transform 160ms ease;
 }
 
-.pairing_page .pairing_carousel_arrow:hover,
-.pairing_page .pairing_recipe_arrow:hover {
+.pairing_page .pairing_carousel_arrow:hover {
     background: var(--makgeolli_light2);
     transform: scale(1.08);
 }
 
-.pairing_page .pairing_carousel_arrow img,
-.pairing_page .pairing_recipe_arrow img {
+.pairing_page .pairing_carousel_arrow img {
     width: 1.25rem;
     height: 1.25rem;
 }
@@ -1739,9 +1736,6 @@
     .pairing_page .pairing_carousel_status { margin-top: 0.75rem; text-align: left; }
     .pairing_page .pairing_recipes_heading { gap: 1.5rem; }
     .pairing_page .pairing_recipe_controls {
-        display: grid;
-        grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
-        gap: 0.375rem;
         width: 100%;
         align-self: stretch;
     }
@@ -1922,7 +1916,6 @@
 
     .pairing_page .pairing_recipe_picker,
     .pairing_page .pairing_carousel_arrow img,
-    .pairing_page .pairing_recipe_arrow img,
     .pairing_page .pairing_food_card,
     .pairing_page .pairing_food_card_image {
         transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
@@ -1951,13 +1944,11 @@
             transform: scale(1.07);
         }
 
-        .pairing_page .pairing_food_previous:hover img,
-        .pairing_page #pairing_recipe_previous:hover img {
+        .pairing_page .pairing_food_previous:hover img {
             transform: translateX(-0.125rem);
         }
 
-        .pairing_page .pairing_food_next:hover img,
-        .pairing_page #pairing_recipe_next:hover img {
+        .pairing_page .pairing_food_next:hover img {
             transform: translateX(0.125rem);
         }
     }

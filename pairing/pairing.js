@@ -1168,8 +1168,6 @@
         if (!picker) return;
         setRecipe(Number(picker.dataset.recipeIndex));
     });
-    document.querySelector('#pairing_recipe_previous')?.addEventListener('click', () => setRecipe(state.recipeIndex - 1));
-    document.querySelector('#pairing_recipe_next')?.addEventListener('click', () => setRecipe(state.recipeIndex + 1));
     recipeViewport.addEventListener('keydown', (event) => {
         if (event.key === 'ArrowLeft') {
             event.preventDefault();
