@@ -1,12 +1,9 @@
-/* 인트로 영상이 끝나면 19세 인증 화면을 띄우고, 답에 따라 갈 곳을 정함.
+/* 19세 인증 화면. 답에 따라 갈 곳을 정함.
    YES -> 테스트 페이지, NO -> 돌아가세요 화면 */
 (() => {
-    const intro = document.querySelector('.intro');
-    const video = document.querySelector('.intro_video');
-    const skip = document.querySelector('.intro_skip');
     const gate = document.querySelector('.age_gate');
 
-    if (!intro || !gate) return;
+    if (!gate) return;
 
     const views = gate.querySelectorAll('.age_gate_view');
     // YES 를 눌렀을 때 갈 곳. 마크업에 적어 두고 여기서 읽음
@@ -51,30 +48,6 @@
         const current = gate.querySelector(`.age_gate_view[data-view="${name}"]`);
         current?.querySelector('button')?.focus({ preventScroll: true });
     }
-
-    // 영상 자리를 비우고 인증 화면을 드러냄. 영상이 뒤에서 계속 돌지 않도록 멈춰 둠
-    let isGateOpen = false;
-
-    function openGate() {
-        if (isGateOpen) return;
-
-        isGateOpen = true;
-        video?.pause();
-        intro.hidden = true;
-        gate.hidden = false;
-        showView('ask');
-    }
-
-    if (video) {
-        video.addEventListener('ended', openGate);
-        // 자동 재생이 막히거나 파일을 못 읽으면 마지막 화면에 갇히므로 그때도 넘겨 줌
-        video.addEventListener('error', openGate);
-    } else {
-        openGate();
-    }
-
-    // Skip 은 영상만 건너뜀. 인증은 거쳐야 하므로 인증 화면으로 보냄
-    skip?.addEventListener('click', openGate);
 
     gate.addEventListener('click', (event) => {
         const button = event.target instanceof Element
