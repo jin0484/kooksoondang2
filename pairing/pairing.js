@@ -69,33 +69,33 @@
 
     const foodData = {
         korean: [
-            { title: 'Pajeon', description: '(Korean Scallion Pancake)', tag: 'Savory · Nutty', image: 'figma/korean_pajeon.png', imagePosition: '50% 50%' },
-            { title: 'Bossam', description: '(Boiled Pork Wraps)', tag: 'Rich · Savory', image: 'figma/korean_bossam.png', imagePosition: '50% 50%' },
-            { title: 'Bulgogi', description: '(Korean Barbecue Beef)', tag: 'Sweet · Savory', image: 'figma/korean_bulgogi.png', imagePosition: '50% 50%' },
-            { title: 'Dakgalbi', description: '(Spicy Stir-Fried Chicken)', tag: 'Spicy · Sweet', image: 'figma/korean_dakgalbi.png', imagePosition: '50% 50%' },
-            { title: 'Kimchi Jjigae', description: '(Kimchi Stew)', tag: 'Spicy · Rich', image: 'figma/korean_kimchi_jjigae.png', imagePosition: '50% 50%' },
-            { title: 'Dotori-muk Muchim', description: '(Acorn Jelly Salad)', tag: 'Nutty · Refreshing', image: 'figma/korean_dotori_muk_muchim.png', imagePosition: '50% 50%' },
-            { title: 'Jeyuk Bokkeum', description: '(Spicy Stir-Fried Pork)', tag: 'Spicy · Savory', image: 'figma/korean_jeyuk_bokkeum.png', imagePosition: '50% 50%' },
-            { title: 'Dubu Kimchi', description: '(Tofu with Stir-Fried Kimchi)', tag: 'Spicy · Tangy', image: 'figma/korean_dubu_kimchi.png', imagePosition: '50% 50%' }
+            { title: 'Pajeon', description: '(Korean Scallion Pancake)', tag: 'Savory · Nutty', image: 'card/korean_pajeon.jpg', imagePosition: '50% 50%' },
+            { title: 'Bossam', description: '(Boiled Pork Wraps)', tag: 'Rich · Savory', image: 'card/korean_bossam.jpg', imagePosition: '50% 50%' },
+            { title: 'Bulgogi', description: '(Korean Barbecue Beef)', tag: 'Sweet · Savory', image: 'card/korean_bulgogi.jpg', imagePosition: '50% 50%' },
+            { title: 'Dakgalbi', description: '(Spicy Stir-Fried Chicken)', tag: 'Spicy · Sweet', image: 'card/korean_dakgalbi.jpg', imagePosition: '50% 50%' },
+            { title: 'Kimchi Jjigae', description: '(Kimchi Stew)', tag: 'Spicy · Rich', image: 'card/korean_kimchi_jjigae.jpg', imagePosition: '50% 50%' },
+            { title: 'Dotori-muk Muchim', description: '(Acorn Jelly Salad)', tag: 'Nutty · Refreshing', image: 'card/korean_dotori_muk_muchim.jpg', imagePosition: '50% 50%' },
+            { title: 'Jeyuk Bokkeum', description: '(Spicy Stir-Fried Pork)', tag: 'Spicy · Savory', image: 'card/korean_jeyuk_bokkeum.jpg', imagePosition: '50% 50%' },
+            { title: 'Dubu Kimchi', description: '(Tofu with Stir-Fried Kimchi)', tag: 'Spicy · Tangy', image: 'card/korean_dubu_kimchi.jpg', imagePosition: '50% 50%' }
         ],
         global: [
-            { title: 'Margherita Pizza', description: '(Italian)', tag: 'Savory · Tangy', image: 'Margherita Pizza.png', imagePosition: '50% 50%' },
-            { title: 'Buffalo Wings', description: '(American)', tag: 'Spicy · Savory', image: 'figma/world_buffalo_wings.png', imagePosition: '50% 45%' },
-            { title: 'Fish and Chips', description: '(British)', tag: 'Crispy · Savory', image: 'figma/world_fish_and_chips.png', imagePosition: '50% 50%' },
-            { title: 'Spicy Beef Tacos', description: '(Mexican)', tag: 'Spicy · Fresh', image: 'figma/world_spicy_beef_tacos.png', imagePosition: '50% 50%' },
-            { title: 'Thai Green Curry', description: '(Thai)', tag: 'Spicy · Creamy', image: 'Thai Green Curry.png', imagePosition: '50% 50%' },
-            { title: 'Japanese Gyoza', description: '(Japanese)', tag: 'Savory · Nutty', image: 'figma/world_japanese_gyoza.png', imagePosition: '50% 50%' },
-            { title: 'Strawberry Cheesecake', description: '(Western Dessert)', tag: 'Sweet · Creamy', image: 'figma/world_strawberry_cheesecake.png', imagePosition: '50% 22%' },
-            { title: 'Jamón with Melon', description: '(Spanish)', tag: 'Sweet · Salty', image: 'figma/world_jamon_with_melon.png', imagePosition: '50% 50%' }
+            { title: 'Margherita Pizza', description: '(Italian)', tag: 'Savory · Tangy', image: 'card/Margherita Pizza.jpg', imagePosition: '50% 50%' },
+            { title: 'Buffalo Wings', description: '(American)', tag: 'Spicy · Savory', image: 'card/world_buffalo_wings.jpg', imagePosition: '50% 45%' },
+            { title: 'Fish and Chips', description: '(British)', tag: 'Crispy · Savory', image: 'card/world_fish_and_chips.jpg', imagePosition: '50% 50%' },
+            { title: 'Spicy Beef Tacos', description: '(Mexican)', tag: 'Spicy · Fresh', image: 'card/world_spicy_beef_tacos.jpg', imagePosition: '50% 50%' },
+            { title: 'Thai Green Curry', description: '(Thai)', tag: 'Spicy · Creamy', image: 'card/Thai Green Curry.jpg', imagePosition: '50% 50%' },
+            { title: 'Japanese Gyoza', description: '(Japanese)', tag: 'Savory · Nutty', image: 'card/world_japanese_gyoza.jpg', imagePosition: '50% 50%' },
+            { title: 'Strawberry Cheesecake', description: '(Western Dessert)', tag: 'Sweet · Creamy', image: 'card/world_strawberry_cheesecake.jpg', imagePosition: '50% 22%' },
+            { title: 'Jamón with Melon', description: '(Spanish)', tag: 'Sweet · Salty', image: 'card/world_jamon_with_melon.jpg', imagePosition: '50% 50%' }
         ]
     };
 
     foodData.popular = [
-        { title: 'Pajeon', description: '(Korean Scallion Pancake)', tag: 'Savory · Nutty', image: 'figma/popular_pajeon.png', imagePosition: '50% 50%' },
-        { title: 'Bossam', description: '(Boiled Pork Wraps)', tag: 'Rich · Savory', image: 'figma/popular_bossam.png', imagePosition: '50% 50%' },
-        { title: 'Dakgalbi', description: '(Spicy Stir-Fried Chicken)', tag: 'Spicy · Fresh', image: 'figma/popular_dakgalbi.png', imagePosition: '50% 50%' },
-        { title: 'Margherita Pizza', description: '(Italian)', tag: 'Savory · Tangy', image: 'Margherita Pizza.png', imagePosition: '50% 50%' },
-        { title: 'Jamón with Melon', description: '(Spanish)', tag: 'Sweet · Salty', image: 'figma/popular_jamon_with_melon.png', imagePosition: '50% 50%' }
+        { title: 'Pajeon', description: '(Korean Scallion Pancake)', tag: 'Savory · Nutty', image: 'card/popular_pajeon.jpg', imagePosition: '50% 50%' },
+        { title: 'Bossam', description: '(Boiled Pork Wraps)', tag: 'Rich · Savory', image: 'card/popular_bossam.jpg', imagePosition: '50% 50%' },
+        { title: 'Dakgalbi', description: '(Spicy Stir-Fried Chicken)', tag: 'Spicy · Fresh', image: 'card/popular_dakgalbi.jpg', imagePosition: '50% 50%' },
+        { title: 'Margherita Pizza', description: '(Italian)', tag: 'Savory · Tangy', image: 'card/Margherita Pizza.jpg', imagePosition: '50% 50%' },
+        { title: 'Jamón with Melon', description: '(Spanish)', tag: 'Sweet · Salty', image: 'card/popular_jamon_with_melon.jpg', imagePosition: '50% 50%' }
     ];
 
     const recipeIconSet = {
@@ -574,21 +574,25 @@
             Number(matches.includes(b.title)) - Number(matches.includes(a.title)));
     }
 
-    function renderFoodCards() {
+    function renderFoodCards({ animate = false } = {}) {
         const foods = getVisibleFoods();
         const matches = foodMatches[recommendedProduct?.id] || [];
         const matchNote = document.querySelector('#pairing_food_match');
         matchNote.hidden = !recommendedProduct;
         matchNote.textContent = recommendedProduct ? `Picked for your ${recommendedProduct.name}. Look for the “Suggested match” label.` : '';
         document.querySelector('[data-food-category="popular"]').textContent = recommendedProduct ? 'For Your Match' : 'Popular Picks';
-        foodTrack.innerHTML = foods.map((food) => {
+        foodTrack.innerHTML = foods.map((food, index) => {
             const imageStyles = food.imagePosition
                 ? `--pairing-food-image-position: ${escapeHtml(food.imagePosition)};`
                 : '';
+            // 탭을 눌렀을 때 왼쪽 카드부터 차례로 등장. 화면 밖 카드까지 기다리지 않게 순번은 6에서 멈춤
+            const enterAttributes = animate
+                ? ` is_entering" style="--pairing-food-card-order: ${Math.min(index, 6)};`
+                : '';
 
             return `
-            <article class="pairing_food_card">
-                <img class="pairing_food_card_image" src="${assetUrl(`img/food/${food.image}`)}" alt="${escapeHtml(food.title)}" loading="lazy"${imageStyles ? ` style="${imageStyles}"` : ''}>
+            <article class="pairing_food_card${enterAttributes}">
+                <img class="pairing_food_card_image" src="${assetUrl(`img/food/${food.image}`)}" alt="${escapeHtml(food.title)}" loading="lazy" decoding="async"${imageStyles ? ` style="${imageStyles}"` : ''}>
                 ${matches.includes(food.title) ? '<span class="pairing_food_badge">Suggested match</span>' : ''}
                 <h3>${escapeHtml(food.title)}</h3>
                 <p>${escapeHtml(food.description)}</p>
@@ -611,7 +615,7 @@
             tab.tabIndex = isActive ? 0 : -1;
         });
         document.querySelector('#pairing_food_panel').setAttribute('aria-labelledby', `food_tab_${category}`);
-        renderFoodCards();
+        renderFoodCards({ animate: true });
     }
 
     function getFoodCardScrollStart(card) {
@@ -636,7 +640,13 @@
         foodNextButton.disabled = foodTrack.scrollLeft >= maxScroll - 2;
         const trackRect = foodTrack.getBoundingClientRect();
         const cards = [...foodTrack.children];
-        const visible = cards.map((card, index) => ({ rect: card.getBoundingClientRect(), index }))
+        const cardRects = cards.map((card, index) => ({ card, rect: card.getBoundingClientRect(), index }));
+        // 양 끝에서 일부만 보이는 카드는 반투명하게 눌러서, 잘린 카드가 아니라 '더 있음' 신호로 읽히게 함
+        cardRects.forEach(({ card, rect }) => {
+            const isFullyVisible = rect.left >= trackRect.left - 1 && rect.right <= trackRect.right + 1;
+            card.classList.toggle('is_clipped', !isFullyVisible);
+        });
+        const visible = cardRects
             .filter(({ rect }) => rect.left < trackRect.right - 8 && rect.right > trackRect.left + 8);
         const status = visible.length ? `${visible[0].index + 1}–${visible.at(-1).index + 1} of ${cards.length} pairings` : '';
         const statusElement = document.querySelector('#pairing_food_status');
@@ -1183,4 +1193,19 @@
     renderFoodCards();
     renderRecipePickers();
     renderRecipe();
+
+    // 다른 탭 카드 사진을 한가할 때 미리 받아 둬서, 탭을 누르면 캐시에서 바로 뜨게 함
+    const preloadFoodImages = () => {
+        const images = new Set(Object.values(foodData).flat().map((food) => assetUrl(`img/food/${food.image}`)));
+        images.forEach((src) => {
+            const image = new Image();
+            image.decoding = 'async';
+            image.src = src;
+        });
+    };
+    if ('requestIdleCallback' in window) {
+        window.addEventListener('load', () => requestIdleCallback(preloadFoodImages, { timeout: 3000 }), { once: true });
+    } else {
+        window.addEventListener('load', () => setTimeout(preloadFoodImages, 1000), { once: true });
+    }
 })();

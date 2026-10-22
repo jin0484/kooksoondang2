@@ -439,13 +439,18 @@
     transform: translateY(-0.125rem);
 }
 
+/* 카드 줄은 항상 탭 버튼과 같은 왼쪽 선에서 시작하고, 화살표는 카드 아래 오른쪽에 모아 둠
+   (화살표가 양옆을 차지하면 탭마다 카드 시작점이 달라져서) */
 .pairing_page .pairing_food_carousel {
     display: grid;
-    grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+    grid-template-columns: minmax(0, 1fr) 2.75rem 2.75rem;
     align-items: center;
-    gap: 1.875rem;
+    gap: 1rem 0.625rem;
     margin-top: 1.25rem;
 }
+
+.pairing_page .pairing_food_previous { grid-column: 2; grid-row: 2; }
+.pairing_page .pairing_food_next { grid-column: 3; grid-row: 2; }
 
 .pairing_page .pairing_food_carousel.is_all_visible {
     grid-template-columns: minmax(0, 1fr);
@@ -483,6 +488,8 @@
 }
 
 .pairing_page .pairing_food_track {
+    grid-column: 1 / -1;
+    grid-row: 1;
     display: grid;
     grid-auto-columns: 16.875rem;
     grid-auto-flow: column;
@@ -524,6 +531,11 @@
     border-radius: 1.125rem;
     background: white;
     scroll-snap-align: start;
+}
+
+/* 카드 줄 끝에 걸려 잘린 카드. 반투명하게 해서 뒤로 물러나 보이게 함 (pairing.js 가 붙임) */
+.pairing_page .pairing_food_card.is_clipped {
+    opacity: 0.5;
 }
 
 .pairing_page .pairing_food_card_image {
@@ -1439,11 +1451,6 @@
         height: clamp(1.25rem, 1.75vw, 1.75rem);
     }
 
-    .pairing_page .pairing_food_carousel {
-        grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
-        gap: 1rem;
-    }
-
     .pairing_page .pairing_food_track {
         grid-auto-columns: clamp(14.5rem, 26vw, 16.875rem);
         gap: 1rem;
@@ -1702,15 +1709,7 @@
         padding: 0.625rem 0.875rem;
         font-size: 0.875rem;
     }
-    .pairing_page .pairing_food_carousel {
-        grid-template-columns: 1fr 2.75rem 2.75rem;
-        gap: 1rem 0.625rem;
-    }
-    .pairing_page .pairing_food_previous { grid-column: 2; grid-row: 2; }
-    .pairing_page .pairing_food_next { grid-column: 3; grid-row: 2; }
     .pairing_page .pairing_food_track {
-        grid-column: 1 / -1;
-        grid-row: 1;
         grid-auto-columns: min(82vw, 23rem);
         gap: 0.75rem;
         padding: 0.25rem;
@@ -1888,6 +1887,21 @@
         }
     }
 
+    /* 음식 탭을 누를 때마다 카드가 왼쪽부터 하나씩 서서히 나타남 (순번은 pairing.js 가 넣어 줌).
+       카드 줄이 넘친 부분을 잘라 내서, 옆으로 밀면 첫 카드 왼쪽이 잘린 채 튀어 보이므로 투명도만 바꿈 */
+    /* 끝 값을 비워 둬서, 잘린 카드는 0.5 까지만 나타남 */
+    @keyframes pairing_food_card_in {
+        from {
+            opacity: 0;
+        }
+    }
+
+    .pairing_page .pairing_food_card.is_entering {
+        /* backwards: 기다리는 동안만 숨겨 두고, 끝나면 손을 뗌 */
+        animation: pairing_food_card_in 520ms ease-out backwards;
+        animation-delay: calc(var(--pairing-food-card-order, 0) * 80ms);
+    }
+
     .pairing_page .pairing_question_option.is_selected {
         animation: pairing_option_selected 300ms cubic-bezier(0.22, 1, 0.36, 1);
     }
@@ -1906,6 +1920,10 @@
     .pairing_page .pairing_food_card,
     .pairing_page .pairing_food_card_image {
         transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+    }
+
+    .pairing_page .pairing_food_card {
+        transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease, opacity 220ms ease;
     }
 
     @media (hover: hover) and (pointer: fine) {
