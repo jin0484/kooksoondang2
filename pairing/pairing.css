@@ -1538,13 +1538,6 @@
     color: #3c3028;
 }
 
-.pairing_page .pairing_question_missing {
-    margin: 0.75rem 0 0;
-    color: var(--pairing-copy);
-    font-size: 0.875rem;
-    line-height: 1.5;
-}
-
 .pairing_page .pairing_food_match {
     margin: 1.5rem 0 0;
     padding: 1rem 1.25rem;
