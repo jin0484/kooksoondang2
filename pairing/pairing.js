@@ -400,7 +400,6 @@
                         <button class="pairing_question_nav_button pairing_question_previous" type="button" data-question-previous="${questionIndex}"${isFirstQuestion ? ' disabled aria-disabled="true"' : ''}>Previous</button>
                         <button class="pairing_question_nav_button pairing_question_next" type="button" data-question-next="${questionIndex}"${canContinue ? '' : ' disabled aria-disabled="true"'}>${isLastQuestion ? 'View Result' : 'Next'}</button>
                     </div>
-                    <p class="pairing_question_missing" hidden></p>
                 </div>
             </section>`;
     }
@@ -430,10 +429,6 @@
             const isFirstQuestion = questionIndex === 0;
             const isLastQuestion = questionIndex === questions.length - 1;
             const canContinue = isLastQuestion ? canShowResult : Boolean(selectedAnswer);
-            const missingHint = panel.querySelector('.pairing_question_missing');
-            missingHint.hidden = !isLastQuestion || canShowResult;
-            missingHint.textContent = isLastQuestion && !canShowResult ? `Answer ${missing.join(', ')} to unlock your result.` : '';
-
             panel.classList.toggle('is_open', isOpen);
             panel.classList.toggle('is_collapsed', !isOpen);
             panel.classList.toggle('is_answered', Boolean(selectedAnswer));
