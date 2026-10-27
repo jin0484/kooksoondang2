@@ -8,6 +8,12 @@
    header / footer는 건드리지 않습니다.
 ========================================================================== */
 
+/* 첫 등장 연출 동안 lenis 가 스크롤을 잠그면(overflow: clip) 스크롤 바가 사라져
+   화면이 옆으로 덜컹거림. 스크롤 바 자리를 처음부터 계속 남겨 둠 */
+html {
+  scrollbar-gutter: stable;
+}
+
 .products_main {
   --products_max: 82.5rem;
   --products_gutter: clamp(1.25rem, 5vw, 6.25rem);

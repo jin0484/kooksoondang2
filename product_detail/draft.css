@@ -394,7 +394,7 @@ section {
 .pd_features {
     --u: calc(min(100vw, 1920px) / 1920);
     /* 화면 정중앙보다 얼마나 위로 올릴지 (고정 헤더 아래 공간에 맞춤) */
-    --lift: 0vh;
+    --lift: -5vh;
 
     position: relative;
     /* 고정되어 있는 동안 스크롤할 길이: 화면 높이의 2배 + 고정 화면 1개 */
