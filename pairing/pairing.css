@@ -1007,9 +1007,9 @@
     justify-content: flex-end;
     padding: 0.625rem 1rem;
     background: var(--makgeolli_White);
-    border-bottom: 1px solid var(--pairing-line);
 }
 
+/* 테두리·배경 없이 X 글자만. 누르는 영역(2.75rem)은 그대로 둠 */
 .pairing_page .pairing_modal_close {
     display: inline-flex;
     align-items: center;
@@ -1017,17 +1017,17 @@
     width: 2.75rem;
     height: 2.75rem;
     padding: 0;
-    border: 1px solid var(--pairing-line);
-    border-radius: 50%;
-    background: var(--pairing-paper);
+    border: 0;
+    background: none;
     color: var(--pairing-copy);
     font-size: 2rem;
     line-height: 1;
     cursor: pointer;
+    transition: color 160ms ease;
 }
 
 .pairing_page .pairing_modal_close:hover {
-    background: var(--makgeolli_light2);
+    color: var(--pairing-text);
 }
 
 .pairing_page .pairing_modal_result_header {
