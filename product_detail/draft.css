@@ -105,6 +105,14 @@ section {
     transform: translateX(-50%);
 }
 
+/* 모바일: 판 높이를 화면 높이의 36% 로 키워 조각 더미가 화면 절반쯤 차지하게 함
+   (판이 화면보다 넓어져 양옆은 잘리고, 조각은 보이는 폭 안에서만 쌓임 - banner_physics.js 가 처리) */
+@media (max-width: 767px) {
+    .pd_banner_stage {
+        width: max(100%, calc(36vh * 1920 / 880));
+    }
+}
+
 /* 조각 하나하나. 위치와 너비는 판 크기에 대한 % (style 의 --x --y --w) */
 .pd_banner_item {
     position: absolute;
@@ -627,7 +635,10 @@ section {
 
     /* 화면에 고정된 한 장 안에서 글은 위, 그릇은 아래 */
     .pd_features {
-        --bowl-u: calc(min(100vw - 3rem, 705px) / 705);
+        /* 그릇 폭은 화면 폭 말고 화면 높이에도 맞춤: 글(위)+그릇이 한 화면(100vh)보다 길면
+           아래가 다음 섹션에 가려 잘리므로, 글이 차지하는 높이(21rem)를 뺀 나머지 안에 그릇이 들어오게 함.
+           그릇은 폭 705 x 높이 740 비율. 너무 작아지지 않게 최소 15rem */
+        --bowl-u: calc(min(100vw - 3rem, 705px, max(15rem, (100vh - 21rem) * 705 / 740)) / 705);
     }
 
     .pd_features_sticky {
@@ -916,6 +927,12 @@ section {
         /* 카드 그림자/호버 위쪽이 잘리지 않게 위아래 여유 */
         padding-block: 0.5rem 1.5rem;
         margin-block: -0.5rem -1.5rem;
+        /* 목록을 양쪽 화면 끝까지 늘림: 섹션 좌우 여백(6vw)에서 카드가 잘려 보이던 것을 없앰.
+           첫 카드·끝 카드가 화면 끝에 붙지 않도록 같은 만큼 안쪽 여백을 주고, 스냅도 그 선에 맞춤 */
+        width: calc(100% + 12vw);
+        margin-inline: -6vw;
+        padding-inline: 6vw;
+        scroll-padding-inline: 6vw;
         cursor: grab;
     }
 
@@ -971,4 +988,153 @@ section {
 .pd_banner_stage.is_dragging,
 .pd_banner_stage.is_dragging .pd_banner_item {
     cursor: grabbing;
+}
+
+
+/* =========================================================
+   MORE PRODUCT CARD 새 디자인 (PC·태블릿·모바일 공통)
+   상품 목록 페이지(products.css)의 카드와 같은 모양.
+   - 평소: 흰 카드 + 연한 회색 사진 칸 + 회색 해시태그/화살표
+   - 호버: 사진 칸에 위(연한 색) → 아래(제품 색) 그라데이션이 아래에서 위로 올라오고
+           해시태그는 제품 색, 화살표 칸은 살짝 진해짐. 그림자 없음
+   카드 크기와 간격은 위쪽 슬라이드 규칙이 그대로 정함
+========================================================= */
+
+.more_product_name_break {
+    display: none;
+}
+
+@media all {
+
+    .more_products_list .more_product_card {
+        border: 1px solid var(--makgeolli_light3, #f8f2ef);
+        border-radius: 0.5rem;
+        background: #fff;
+    }
+
+    .more_products_list .more_product_card > article {
+        align-items: stretch;
+        padding: 0.5rem;
+    }
+
+    .more_products_list .more_product_card > article:hover,
+    .more_products_list .more_product_card > article:focus-visible {
+        box-shadow: none;
+    }
+
+    /* 사진 칸 */
+    .more_products_list .more_product_media {
+        aspect-ratio: 252 / 279;
+        overflow: hidden;
+        border-radius: 0.125rem;
+        background: var(--makgeolli_light4, #faf8f7);
+    }
+
+    /* 호버 때 그라데이션 한 장이 아래에서 위로 올라옴.
+       맨 위 색이 사진 칸 바탕색과 같아서 경계가 보이지 않음 */
+    .more_products_list .more_product_media::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, var(--makgeolli_light4, #faf8f7), var(--product-tone, #f3878b));
+        transform: translateY(100%);
+        transition: transform 0.8s cubic-bezier(0.33, 0, 0.2, 1);
+    }
+
+    .more_products_list .more_product_card > article:hover .more_product_media::before,
+    .more_products_list .more_product_card > article:focus-visible .more_product_media::before {
+        transform: translateY(0);
+    }
+
+    /* 예전 동그라미 배경과 과일은 새 디자인에 없음 */
+    .more_products_list .more_product_tone,
+    .more_products_list .more_product_fruit {
+        display: none;
+    }
+
+    .more_products_list .more_product_bottle,
+    .more_products_list .more_product_card > article:hover .more_product_bottle,
+    .more_products_list .more_product_card > article:focus-visible .more_product_bottle {
+        /* 피그마: 사진 칸 279 중 병 264 */
+        height: 94.6%;
+        filter: none;
+        transform: translate(-50%, -50%);
+    }
+
+    /* 제목 + 해시태그 */
+    .more_products_list .more_product_name,
+    .more_products_list .more_product_taste {
+        align-self: stretch;
+        margin: 0;
+        padding-inline: 0.25rem 2.75rem;
+        text-align: left;
+    }
+
+    .more_products_list .more_product_name {
+        min-height: 2.6em;
+        margin-top: 0.75rem;
+        font-size: clamp(1rem, 1.67vw, 1.5rem);
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    .more_product_name_break {
+        display: inline;
+    }
+
+    .more_products_list .more_product_taste {
+        margin-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        font-family: Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+        font-size: clamp(0.75rem, 1.11vw, 1rem);
+        font-weight: 400;
+        line-height: 1.7;
+        color: var(--bekseju_dark3, #8d7e77);
+        transition: color 0.3s ease;
+    }
+
+    .more_products_list .more_product_card > article:hover .more_product_taste,
+    .more_products_list .more_product_card > article:focus-visible .more_product_taste {
+        color: color-mix(in srgb, var(--product-tone, #ee767a) 55%, #6b5a50);
+    }
+
+    /* 오른쪽 아래 화살표 */
+    .more_products_list .more_product_card > article::after {
+        content: '';
+        position: absolute;
+        right: 0.75rem;
+        bottom: 0.75rem;
+        width: 2rem;
+        height: 2rem;
+        background: url('../products/products_asset/icon/card_arrow.svg') center / contain no-repeat;
+    }
+
+    .more_products_list .more_product_card > article:hover::after,
+    .more_products_list .more_product_card > article:focus-visible::after {
+        background-image: url('../products/products_asset/icon/card_arrow_hover.svg');
+    }
+}
+
+
+/* 모바일: Features 제목·설명과 아래 그릇 사이를 더 띄우고(1.5rem → 5rem), 위쪽 빈 공간은 줄임 */
+@media (max-width: 767px) {
+    .pd_features {
+        /* 모바일은 위 여백(8rem)과 글·그릇 사이(5rem)가 있어 글 쪽이 25rem */
+        --bowl-u: calc(min(100vw - 3rem, 705px, max(15rem, (100vh - 25rem) * 705 / 740)) / 705);
+    }
+
+    .pd_features_sticky {
+        gap: 5rem;
+        /* 위쪽 빈 공간 줄이기: 가운데 정렬 대신 위에서부터 쌓고, 헤더(약 64px) 바로 아래에서 시작 */
+        justify-content: flex-start;
+        padding-top: 8rem;
+    }
+}
+
+
+/* PC 카드 좌우 간격 20px */
+@media (min-width: 1025px) {
+    .more_products_list {
+        column-gap: 20px;
+    }
 }

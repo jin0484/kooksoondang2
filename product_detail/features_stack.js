@@ -9,6 +9,10 @@
    스크롤 양에 비례해 끌려 올라오는 방식이 아니라, 문턱을 넘으면 정해진 시간 동안 스스로 올라옴
    (빠르게 휠을 돌려도 한 장씩 천천히 올라오고, 되돌리면 한 장씩 내려감).
    각 조각의 움직임은 CSS(.pd_card)가 --e 값으로 그림.
+
+   태블릿·모바일(1024px 이하)에서는 조각이 올라오는 동안 아래로 내려가는 스크롤을 막아 두었다가,
+   다 올라와 움직임이 멈추면 풀어 줌 (올라오는 도중 페이지가 넘어가 어긋나지 않게).
+   위로 올라가는 스크롤은 언제나 가능.
 ========================================================= */
 
 (() => {
@@ -31,6 +35,47 @@
 
     let raf = 0;
     let last = 0;
+
+    // ---- 올라오는 동안 아래 스크롤 잠금 (태블릿·모바일) ----
+    const lockQuery = window.matchMedia('(max-width: 1024px)');
+    // 이 값(0~1) 이상 올라오면 다 올라온 것으로 봄
+    const DONE = 0.97;
+    let locked = false;
+    let holdY = 0;
+    let touchY = 0;
+
+    const isRising = () => target.some((t, i) => t === 1 && current[i] < DONE);
+
+    const syncLock = (engaged = true) => {
+        const should = !reduceMotion && lockQuery.matches && engaged && isRising();
+
+        if (should && !locked) {
+            locked = true;
+            holdY = window.scrollY;
+        } else if (!should && locked) {
+            locked = false;
+        }
+    };
+
+    window.addEventListener('wheel', (event) => {
+        if (locked && event.deltaY > 0) event.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('touchstart', (event) => {
+        touchY = event.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (event) => {
+        const y = event.touches[0].clientY;
+        // 손가락이 위로 움직이는 것 = 아래로 스크롤
+        if (locked && y < touchY && event.cancelable) event.preventDefault();
+        touchY = y;
+    }, { passive: false });
+
+    window.addEventListener('keydown', (event) => {
+        if (!locked) return;
+        if (['ArrowDown', 'PageDown', 'End', ' ', 'Spacebar'].includes(event.key)) event.preventDefault();
+    });
 
     const apply = () => {
         current.forEach((v, i) => bowl.style.setProperty('--e' + (i + 1), v.toFixed(4)));
@@ -56,6 +101,7 @@
         }
 
         apply();
+        syncLock(true);
         raf = moving ? requestAnimationFrame(frame) : 0;
     };
 
@@ -72,6 +118,14 @@
 
         THRESHOLDS.forEach((th, i) => { target[i] = progress >= th ? 1 : 0; });
 
+        // 고정 구간에 들어와 있을 때만 잠금. 이미 잠겨 있으면 내려간 만큼 되돌림
+        const engaged = progress > 0;
+
+        if (locked) {
+            holdY = Math.min(holdY, window.scrollY);
+            if (window.scrollY > holdY + 1) window.scrollTo(0, holdY);
+        }
+
         if (reduceMotion) {
             target.forEach((t, i) => { current[i] = t; });
             apply();
@@ -79,6 +133,7 @@
         }
 
         kick();
+        syncLock(engaged);
     };
 
     window.addEventListener('scroll', read, { passive: true });
@@ -88,4 +143,6 @@
     read();
     target.forEach((t, i) => { current[i] = t; });
     apply();
+    // 열자마자 이미 다 올라와 있는 상태이므로 읽기 중에 걸린 잠금은 풀어 줌
+    syncLock(false);
 })();

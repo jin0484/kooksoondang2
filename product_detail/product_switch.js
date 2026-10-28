@@ -1,10 +1,8 @@
 /* =========================================================
-   제품 넘기기 (좌우 화살표) — 회전 테이블처럼
+   제품 넘기기 (좌우 화살표) — 커다란 바퀴를 돌리듯 호를 그리며
 
-   히어로의 "병 + 글" 한 장(.pd_slide)이 통째로 옆으로 돌아 넘어가고,
-   다음 제품이 반대편에서 같은 방식으로 돌아 들어옴.
-   원기둥 "안쪽"에서 카드를 돌려 보는 느낌: 보는 사람이 원기둥의 한가운데(축)에 서 있고,
-   카드는 둘레 안쪽 면에 붙어 있어서 항상 가운데를 향한 채 옆으로 돌아 지나감.
+   히어로의 "병 + 글" 한 장(.pd_slide)이 화면 아래쪽 아주 먼 곳의 한 점을 축으로 삼아
+   호를 그리며 옆으로 넘어가고(그만큼 기울어짐), 다음 제품이 반대편에서 같은 호를 타고 들어옴.
    양옆의 흐린 병은 바로 앞·뒤 제품. 순서는 둥글게 이어짐.
 
    ※ 도수(ABV)와 용량은 확정값. 설명 글은 Draft 말고는 임시 문구라 실제 소개 글이 정해지면 PRODUCTS 의 desc 를 교체
@@ -221,9 +219,11 @@
 
     const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // 원기둥 "안쪽"에서 카드를 돌려 보는 느낌: 현재 슬라이드는 한쪽으로 돌아 나가고,
-    // 다음 슬라이드는 반대쪽에서 돌아 들어옴 (축이 카드 앞쪽에 있어 카드는 가운데를 향한 채 돌아감)
-    const ANGLE = 62; // 카드 사이 각도(도). 클수록 넘어가는 두 카드 사이 간격이 넓어짐
+    // 카드가 화면 아래쪽 먼 곳의 한 점을 축으로 호를 그리며 넘어감.
+    // 축까지의 거리(RADIUS) 는 화면 폭의 몇 배, 카드가 옆으로 가는 거리(REACH) 는 화면 폭의 몇 배인지로 정하고
+    // 기울기는 둘로부터 계산함 (클수록 넘어가는 두 카드 사이 간격이 넓어짐)
+    const RADIUS = 2.6;
+    const REACH = 0.95;
     const DURATION = 1100;
     const EASING = 'cubic-bezier(0.65, 0, 0.25, 1)';
 
@@ -237,12 +237,31 @@
         product.appendChild(incoming);
         fitTitle(incoming);
 
+        // 축은 카드 가운데에서 아래로 RADIUS x 화면 폭 만큼 떨어진 곳
+        const radius = window.innerWidth * RADIUS;
+        const angle = Math.asin(Math.min(1, (window.innerWidth * REACH) / radius)) * 180 / Math.PI;
+        const origin = `50% ${current.offsetHeight / 2 + radius}px`;
+        current.style.transformOrigin = origin;
+        incoming.style.transformOrigin = origin;
+
+        // 제품마다 글이 한 줄·두 줄로 달라 슬라이드 높이가 다름. 다 넘어가고 옛 슬라이드가 빠지는 순간
+        // 높이가 한꺼번에 바뀌면 아래 글이 덜컹거리므로, 넘어가는 동안 상자 높이를 부드럽게 바꿔 줌
+        // (칸은 한 줄에 두 슬라이드가 겹쳐 있어 기본값(stretch)이면 둘 다 큰 쪽 높이로 늘어나 재도 같으므로 위쪽 정렬로 본래 높이를 잼)
+        current.style.alignSelf = 'start';
+        incoming.style.alignSelf = 'start';
+        const heightFrom = current.offsetHeight;
+        const heightTo = incoming.offsetHeight;
+        let heightAnim = null;
+
         let done = false;
         const finish = () => {
             if (done) return;
             done = true;
             current.remove();
+            if (heightAnim) heightAnim.cancel();
             incoming.getAnimations({ subtree: true }).forEach((an) => an.cancel());
+            incoming.style.removeProperty('transform-origin');
+            incoming.style.removeProperty('align-self');
             index = nextIndex;
             paintSides();
             sides.prev.classList.remove('is_out');
@@ -259,23 +278,30 @@
         // dir > 0(다음): 현재는 왼쪽으로, 다음은 오른쪽에서. dir < 0 은 반대
         paintTone(nextIndex);
 
-        // (축이 카드 앞쪽에 있으므로 양의 각도 = 왼쪽으로 돌아감)
-        const out = dir * ANGLE;
-        const inn = -dir * ANGLE;
+        // 축이 카드 아래에 있으므로 시계 반대 방향(음의 각도) = 왼쪽으로 넘어감
+        const out = -dir * angle;
+        const inn = dir * angle;
 
         sides.prev.classList.add('is_out');
         sides.next.classList.add('is_out');
 
         const opts = { duration: DURATION, easing: EASING, fill: 'both' };
 
+        if (heightFrom !== heightTo && product.animate) {
+            heightAnim = product.animate([
+                { height: heightFrom + 'px' },
+                { height: heightTo + 'px' },
+            ], opts);
+        }
+
         current.animate([
-            { transform: 'rotateY(0deg)', opacity: 1 },
-            { transform: `rotateY(${out}deg)`, opacity: 0 },
+            { transform: 'rotate(0deg)', opacity: 1 },
+            { transform: `rotate(${out}deg)`, opacity: 0 },
         ], opts);
 
         const anim = incoming.animate([
-            { transform: `rotateY(${inn}deg)`, opacity: 0 },
-            { transform: 'rotateY(0deg)', opacity: 1 },
+            { transform: `rotate(${inn}deg)`, opacity: 0 },
+            { transform: 'rotate(0deg)', opacity: 1 },
         ], opts);
 
         anim.onfinish = finish;

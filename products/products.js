@@ -100,6 +100,37 @@
         document.querySelector('[data-view-all]');
 
 
+    const viewAllWrap =
+        document.querySelector('.view_all_wrap');
+
+
+    /* PC 에서는 처음에 2줄(4개 x 2줄)만 보여 주고 VIEW ALL 을 누르면 전부 보여 줌 */
+    const desktopQuery =
+        window.matchMedia(
+            '(min-width: 1025px)'
+        );
+
+
+    /* 처음에 보여 줄 줄 수. 한 줄에 몇 개인지는 화면 크기마다 달라서 그때그때 셈 */
+    const DESKTOP_ROWS_COLLAPSED = 2;
+
+
+    function getDesktopCollapsedCount() {
+
+        const columns =
+            getComputedStyle(grid)
+                .gridTemplateColumns
+                .split(' ')
+                .filter(Boolean)
+                .length || 4;
+
+        return columns * DESKTOP_ROWS_COLLAPSED;
+    }
+
+
+    let isDesktopExpanded = false;
+
+
     const viewDetailsButton =
         document.querySelector('[data-view-details]');
 
@@ -331,6 +362,31 @@
         if (emptyMessage) {
             emptyMessage.hidden =
                 visibleCount > 0;
+        }
+
+
+        const collapsedCount =
+            getDesktopCollapsedCount();
+
+
+        const isCollapsed =
+            desktopQuery.matches &&
+            !isDesktopExpanded &&
+            visibleCards.length >
+            collapsedCount;
+
+
+        visibleCards.forEach((card, index) => {
+            card.classList.toggle(
+                'is_desktop_collapsed',
+                isCollapsed &&
+                index >= collapsedCount
+            );
+        });
+
+
+        if (viewAllWrap) {
+            viewAllWrap.hidden = !isCollapsed;
         }
 
 
@@ -1896,6 +1952,8 @@
             return;
         }
 
+
+        isDesktopExpanded = true;
 
         state.category = 'all';
         state.experience = '';
