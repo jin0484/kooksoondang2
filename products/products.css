@@ -5071,3 +5071,180 @@ html.is_type_result_open {
     text-wrap: wrap;
   }
 }
+
+
+/* =========================================================
+   PRODUCT CARD 새 디자인 (PC 1025px 이상)
+   피그마 card 6102:2887
+   - 평소: 흰 카드 + 연한 회색 사진 칸 + 회색 해시태그/화살표
+   - 호버: 사진 칸이 위(연한 색) → 아래(제품 색) 그라데이션,
+           해시태그는 제품 색, 화살표 칸은 살짝 진해짐
+   태블릿·모바일 카드는 기존 모양 그대로
+========================================================= */
+
+@media (min-width: 1025px) {
+
+  /* 카드 좌우 간격 20px (위아래 간격은 그대로) */
+  .product_grid {
+    column-gap: 20px;
+  }
+
+
+  .product_grid .product_card {
+    border: 1px solid var(--makgeolli_light3, #f8f2ef);
+    border-radius: 0.5rem;
+
+    background: #fff;
+  }
+
+
+  .product_grid .product_card > article {
+    align-items: stretch;
+
+    padding: 0.5rem;
+  }
+
+
+  /* 사진 칸 */
+  .product_grid .product_card .product_media {
+    aspect-ratio: 252 / 279;
+
+    overflow: hidden;
+
+    border-radius: 0.125rem;
+
+    background: var(--makgeolli_light4, #faf8f7);
+  }
+
+
+  /* 호버 때 위(연한 색) → 아래(제품 색) 로 깔리는 막. 그라데이션은 전환이 안 걸려서 통째로 밀어 올림 */
+  .product_grid .product_card .product_media::before {
+    content: '';
+
+    position: absolute;
+    inset: 0;
+
+    background:
+      linear-gradient(
+        to bottom,
+        var(--makgeolli_light4, #faf8f7),
+        var(--product_tone, #f3878b)
+      );
+
+    /*
+     * 그라데이션 한 장이 통째로 아래에서 위로 올라옴.
+     * 그라데이션 맨 위 색이 사진 칸 바탕색과 같아서 올라오는 경계가 보이지 않고,
+     * 아래의 진한 제품 색이 차오르듯 따라 올라옴
+     */
+    transform: translateY(100%);
+
+    transition: transform 0.8s cubic-bezier(0.33, 0, 0.2, 1);
+  }
+
+
+  .product_grid .product_card > article:hover .product_media::before,
+  .product_grid .product_card > article:focus-visible .product_media::before,
+  .product_grid .product_card > article:focus-within .product_media::before {
+    transform: translateY(0);
+  }
+
+
+  /* 예전 동그라미 배경과 과일은 새 디자인에 없음 */
+  .product_grid .product_card .product_tone,
+  .product_grid .product_card .product_fruit {
+    display: none;
+  }
+
+
+  .product_grid .product_card .product_bottle,
+  .product_grid .product_card > article:hover .product_bottle,
+  .product_grid .product_card > article:focus-visible .product_bottle,
+  .product_grid .product_card > article:focus-within .product_bottle {
+    /* 피그마: 사진 칸 279 중 병 264 */
+    height: 94.6%;
+
+    filter: none;
+
+    transform: translate(-50%, -50%);
+  }
+
+
+  /* 제목 + 해시태그 */
+  .product_grid .product_card > article .product_name,
+  .product_grid .product_card > article .product_taste {
+    margin: 0;
+    padding-inline: 0.25rem 2.75rem;
+
+    text-align: left;
+  }
+
+
+  .product_grid .product_card > article .product_name {
+    display: block;
+
+    width: auto;
+    min-height: 2.6em;
+    margin-top: 0.75rem;
+
+    font-size: clamp(1rem, 1.67vw, 1.5rem);
+    line-height: 1.3;
+    text-wrap: wrap;
+  }
+
+
+  .product_grid .product_card > article .product_taste {
+    margin-top: 0.25rem;
+    padding-bottom: 0.25rem;
+
+    font-family: Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    font-size: clamp(0.75rem, 1.11vw, 1rem);
+    font-weight: 400;
+    line-height: 1.7;
+
+    color: var(--bekseju_dark3, #8d7e77);
+
+    transition: color 0.3s ease;
+  }
+
+
+  .product_grid .product_card > article:hover .product_taste,
+  .product_grid .product_card > article:focus-visible .product_taste,
+  .product_grid .product_card > article:focus-within .product_taste {
+    color: color-mix(in srgb, var(--product_tone, #ee767a) 55%, #6b5a50);
+  }
+
+
+  /* 오른쪽 아래 화살표 */
+  .product_grid .product_card > article::after {
+    content: '';
+
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+
+    width: 2rem;
+    height: 2rem;
+
+    background: url('products_asset/icon/card_arrow.svg') center / contain no-repeat;
+  }
+
+
+  .product_grid .product_card > article:hover::after,
+  .product_grid .product_card > article:focus-visible::after,
+  .product_grid .product_card > article:focus-within::after {
+    background-image: url('products_asset/icon/card_arrow_hover.svg');
+  }
+
+}
+
+
+/* 제목은 PC 에서 기본으로 두 줄 (마지막 단어를 아랫줄로). 태블릿·모바일은 한 줄 그대로 */
+.product_name_break {
+  display: none;
+}
+
+@media (min-width: 1025px) {
+  .product_name_break {
+    display: inline;
+  }
+}
