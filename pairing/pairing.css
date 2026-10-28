@@ -421,10 +421,11 @@
     margin-top: clamp(2rem, 2.604vw, 3.125rem);
 }
 
+/* 사이트 공통 잔 모양(위 평평 / 아래 둥금). products 카테고리 버튼과 같은 값 */
 .pairing_page .pairing_food_tab {
     padding: 1rem 1.5rem;
     border: 1px solid var(--pairing-line);
-    border-radius: 999px;
+    border-radius: 0.25rem 0.25rem 2rem 2rem;
     background: var(--pairing-paper);
     color: var(--pairing-copy);
     font-size: 0.875rem;
