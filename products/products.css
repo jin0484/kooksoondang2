@@ -5248,3 +5248,21 @@ html.is_type_result_open {
     display: inline;
   }
 }
+
+
+/* PC: 처음엔 2줄만 보이고 VIEW ALL 을 누르면 나머지가 나타남 (products.js) */
+@media (min-width: 1025px) {
+  .product_grid .product_card.is_desktop_collapsed {
+    display: none;
+  }
+}
+
+
+/* PC: 호버 때 카드 뒤에 깔리던 그림자 없앰 */
+@media (min-width: 1025px) {
+  .product_grid .product_card > article:hover,
+  .product_grid .product_card > article:focus-visible,
+  .product_grid .product_card > article:focus-within {
+    box-shadow: none;
+  }
+}

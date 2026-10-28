@@ -100,6 +100,23 @@
         document.querySelector('[data-view-all]');
 
 
+    const viewAllWrap =
+        document.querySelector('.view_all_wrap');
+
+
+    /* PC 에서는 처음에 2줄(4개 x 2줄)만 보여 주고 VIEW ALL 을 누르면 전부 보여 줌 */
+    const desktopQuery =
+        window.matchMedia(
+            '(min-width: 1025px)'
+        );
+
+
+    const DESKTOP_PRODUCTS_COLLAPSED = 8;
+
+
+    let isDesktopExpanded = false;
+
+
     const viewDetailsButton =
         document.querySelector('[data-view-details]');
 
@@ -331,6 +348,27 @@
         if (emptyMessage) {
             emptyMessage.hidden =
                 visibleCount > 0;
+        }
+
+
+        const isCollapsed =
+            desktopQuery.matches &&
+            !isDesktopExpanded &&
+            visibleCards.length >
+            DESKTOP_PRODUCTS_COLLAPSED;
+
+
+        visibleCards.forEach((card, index) => {
+            card.classList.toggle(
+                'is_desktop_collapsed',
+                isCollapsed &&
+                index >= DESKTOP_PRODUCTS_COLLAPSED
+            );
+        });
+
+
+        if (viewAllWrap) {
+            viewAllWrap.hidden = !isCollapsed;
         }
 
 
@@ -1896,6 +1934,8 @@
             return;
         }
 
+
+        isDesktopExpanded = true;
 
         state.category = 'all';
         state.experience = '';
