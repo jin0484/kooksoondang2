@@ -684,8 +684,12 @@
     box-sizing: border-box;
     display: grid;
     grid-template-columns: minmax(0, 1.09fr) minmax(17rem, 0.91fr);
+    /* 너비를 못박아 둬야 높이 상한(max-height)이 비율을 타고 너비까지 줄이지 않음 */
+    width: 100%;
     aspect-ratio: 1024 / 491;
     min-height: 0;
+    /* 넓은 화면에서 카드가 한 화면을 넘지 않게 pairing.js 가 높이 상한을 넣어 줌 (내용보다 작아지지는 않음) */
+    max-height: var(--recipe-card-max, none);
     overflow: hidden;
     border: 1px solid var(--recipe-line);
     border-radius: 1.5rem;

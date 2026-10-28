@@ -1187,6 +1187,65 @@
     renderRecipePickers();
     renderRecipe();
 
+    // 레시피 섹션이 넓은 화면에서도 한 화면에 다 들어오게: 카드 높이 상한 + 근처에서 멈추면 자석처럼 맞춤.
+    // 카드가 가로 비율(aspect-ratio)로 크기를 정하는 1101px 이상에서만 동작함
+    const recipesHeading = document.querySelector('#drink_recipes .pairing_recipes_heading');
+    const recipeFitQuery = window.matchMedia('(min-width: 1101px)');
+    const recipeSnapGap = 24;
+    // 헤더는 스크롤 방향에 따라 숨었다 나타나므로, 보이든 숨든 겹치지 않게 늘 헤더 높이만큼 비워 둠
+    const getSiteHeaderHeight = () => document.querySelector('#site_header')?.offsetHeight || 0;
+
+    function fitRecipeCard() {
+        const card = recipeViewport.querySelector('.pairing_recipe_card');
+        if (!card || !recipesHeading || !recipeFitQuery.matches) {
+            recipeViewport.style.removeProperty('--recipe-card-max');
+            return;
+        }
+
+        const content = card.querySelector('.pairing_recipe_content');
+        const inner = card.querySelector('.pairing_recipe_inner');
+        const contentStyle = getComputedStyle(content);
+        const neededHeight = Math.ceil(inner.offsetHeight + parseFloat(contentStyle.paddingTop) + parseFloat(contentStyle.paddingBottom) + 2);
+        const headingToCard = card.getBoundingClientRect().top - recipesHeading.getBoundingClientRect().top;
+        const availableHeight = Math.floor(window.innerHeight - getSiteHeaderHeight() - recipeSnapGap * 2 - headingToCard);
+        // 화면이 아주 낮아도 글이 잘리지는 않게 내용 높이보다 작아지지 않음
+        recipeViewport.style.setProperty('--recipe-card-max', `${Math.max(availableHeight, neededHeight)}px`);
+    }
+
+    function snapToRecipes() {
+        if (!recipesHeading || !recipeFitQuery.matches || prefersReducedMotion()) return;
+        if (window.siteLenis?.isStopped || resultModal.open) return;
+
+        const target = Math.round(recipesHeading.getBoundingClientRect().top + window.scrollY - getSiteHeaderHeight() - recipeSnapGap);
+        const distance = target - window.scrollY;
+        // 다가오는 중(아래에 있음)이면 화면 1/4 안쪽, 이미 지나쳤으면 1/8 안쪽에서만 끌어당김. 멀면 그냥 둠
+        if (Math.abs(distance) < 4 || distance > window.innerHeight * 0.25 || distance < -window.innerHeight * 0.125) return;
+
+        if (window.siteLenis) window.siteLenis.scrollTo(target, { duration: 0.6 });
+        else window.scrollTo({ top: target, behavior: 'smooth' });
+    }
+
+    let recipeFitFrame = 0;
+    const scheduleRecipeFit = () => {
+        if (recipeFitFrame) return;
+        recipeFitFrame = requestAnimationFrame(() => {
+            recipeFitFrame = 0;
+            fitRecipeCard();
+        });
+    };
+    let recipeSnapTimer = 0;
+    window.addEventListener('scroll', () => {
+        window.clearTimeout(recipeSnapTimer);
+        recipeSnapTimer = window.setTimeout(snapToRecipes, 180);
+    }, { passive: true });
+    window.addEventListener('resize', scheduleRecipeFit, { passive: true });
+    window.addEventListener('load', scheduleRecipeFit, { once: true });
+    document.fonts?.ready.then(scheduleRecipeFit);
+    // 레시피를 바꾸면 글 양이 달라지므로 다시 잼
+    const recipeInner = recipeViewport.querySelector('.pairing_recipe_inner');
+    if (recipeInner && 'ResizeObserver' in window) new ResizeObserver(scheduleRecipeFit).observe(recipeInner);
+    fitRecipeCard();
+
     // 다른 탭 카드 사진을 한가할 때 미리 받아 둬서, 탭을 누르면 캐시에서 바로 뜨게 함
     const preloadFoodImages = () => {
         const images = new Set(Object.values(foodData).flat().map((food) => assetUrl(`img/food/${food.image}`)));
