@@ -111,7 +111,21 @@
         );
 
 
-    const DESKTOP_PRODUCTS_COLLAPSED = 8;
+    /* 처음에 보여 줄 줄 수. 한 줄에 몇 개인지는 화면 크기마다 달라서 그때그때 셈 */
+    const DESKTOP_ROWS_COLLAPSED = 2;
+
+
+    function getDesktopCollapsedCount() {
+
+        const columns =
+            getComputedStyle(grid)
+                .gridTemplateColumns
+                .split(' ')
+                .filter(Boolean)
+                .length || 4;
+
+        return columns * DESKTOP_ROWS_COLLAPSED;
+    }
 
 
     let isDesktopExpanded = false;
@@ -351,18 +365,22 @@
         }
 
 
+        const collapsedCount =
+            getDesktopCollapsedCount();
+
+
         const isCollapsed =
             desktopQuery.matches &&
             !isDesktopExpanded &&
             visibleCards.length >
-            DESKTOP_PRODUCTS_COLLAPSED;
+            collapsedCount;
 
 
         visibleCards.forEach((card, index) => {
             card.classList.toggle(
                 'is_desktop_collapsed',
                 isCollapsed &&
-                index >= DESKTOP_PRODUCTS_COLLAPSED
+                index >= collapsedCount
             );
         });
 

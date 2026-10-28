@@ -99,8 +99,8 @@
         // 바닥과 양쪽 벽. 벽은 화면(배너)에 실제로 보이는 가장자리에 맞춰 조각이 화면 밖으로 나가지 않게 함
         const wall = (x, y, w, h) => Bodies.rectangle(x, y, w, h, { isStatic: true, friction: 0.8 });
         const floor = wall(W / 2, H + 40, W * 5, 160);
-        const wallL = wall(-200, H / 2, 400, H * 6);
-        const wallR = wall(W + 200, H / 2, 400, H * 6);
+        const wallL = wall(-200, H / 2, 400, H * 12);
+        const wallR = wall(W + 200, H / 2, 400, H * 12);
         Composite.add(engine.world, [floor, wallL, wallR]);
 
         let scale = stage.clientWidth / W;
@@ -134,6 +134,10 @@
         fitBounds();
         window.addEventListener('resize', fitBounds);
 
+        // 배너는 판(stage)보다 위로 더 높을 수 있음(모바일은 화면 높이만큼 큼).
+        // 판 위쪽에 남는 높이를 시안 단위로 구해, 조각이 그 위(= 화면 밖)에서 출발하게 함
+        const topExtra = () => Math.max(0, (banner.clientHeight - stage.clientHeight) / scale);
+
         const render = () => {
             for (const it of items) {
                 if (!it.body) continue;
@@ -145,7 +149,7 @@
 
         // 처음에는 모두 화면 위쪽 바깥에 숨겨 둠
         items.forEach((it) => {
-            it.img.style.transform = `translateY(${-H * 1.5 * scale}px)`;
+            it.img.style.transform = `translateY(${-(H * 1.5 + topExtra()) * scale}px)`;
         });
         banner.classList.add('is_physics');
 
@@ -154,7 +158,7 @@
             setTimeout(() => {
                 const size = Math.max(it.box.w, it.box.h);
                 const jitter = (Math.random() - 0.5) * 36;
-                const body = Bodies.fromVertices(Math.min(Math.max(it.center.x + jitter, visL + it.box.w / 2), Math.max(visR - it.box.w / 2, visL)), -size * 0.6 - 40, [it.hull], {
+                const body = Bodies.fromVertices(Math.min(Math.max(it.center.x + jitter, visL + it.box.w / 2), Math.max(visR - it.box.w / 2, visL)), -topExtra() - size * 0.6 - 40, [it.hull], {
                     friction: 0.7,
                     frictionStatic: 0.9,
                     restitution: 0.18,

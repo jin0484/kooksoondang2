@@ -2401,43 +2401,7 @@ html {
     width: clamp(1.8rem, 4vw, 2.5rem);
   }
 
-  .site_footer {
-    padding: clamp(3.5rem, 7vw, 4.5rem) 0 clamp(2.5rem, 5vw, 3.25rem);
-  }
-
-  .site_footer_inner {
-    flex-wrap: nowrap;
-    gap: clamp(2rem, 5vw, 4rem);
-    padding-inline: var(--products_gutter);
-  }
-
-  .footer_left,
-  .footer_right {
-    gap: 1.25rem;
-  }
-
-  .footer_logo img {
-    width: clamp(8.5rem, 18vw, 11.5rem);
-  }
-
-  .footer_links {
-    gap: 0.15rem;
-  }
-
-  .footer_links button,
-  .footer_left small,
-  .footer_right address {
-    font-size: clamp(0.65rem, 1.3vw, 0.82rem);
-  }
-
-  .family_site_button {
-    padding: 0.65rem clamp(1.25rem, 3vw, 2rem);
-    font-size: clamp(0.75rem, 1.5vw, 0.9rem);
-  }
-
-  .footer_sns img {
-    width: clamp(2rem, 4.5vw, 2.75rem);
-  }
+  /* 푸터는 공용(common.css, 메인과 같은 것)을 그대로 씀 */
 
 }
 
@@ -2942,66 +2906,7 @@ html {
     width: clamp(1.5rem, 7vw, 1.85rem);
   }
 
-  .site_footer {
-    padding: clamp(3rem, 14vw, 4rem) 0 2rem;
-  }
-
-  .site_footer_inner {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.75rem;
-    padding-inline: var(--products_gutter);
-  }
-
-  .footer_left,
-  .footer_right {
-    width: 100%;
-    max-width: none;
-    gap: 1rem;
-  }
-
-  .footer_logo img {
-    width: clamp(7.5rem, 34vw, 9rem);
-  }
-
-  .footer_links {
-    gap: 0.2rem;
-  }
-
-  .footer_links button,
-  .footer_left small,
-  .footer_right address {
-    font-size: clamp(0.65rem, 2.8vw, 0.75rem);
-  }
-
-  .footer_right {
-    align-items: stretch;
-  }
-
-  .family_site {
-    order: 3;
-  }
-
-  .family_site_button {
-    justify-content: center;
-    width: 100%;
-    padding: 0.7rem 1.25rem;
-    font-size: 0.8rem;
-  }
-
-  .footer_right address {
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  .footer_sns {
-    justify-content: flex-end;
-    margin-top: -2.75rem;
-  }
-
-  .footer_sns img {
-    width: 2rem;
-  }
+  /* 푸터는 공용(common.css, 메인과 같은 것)을 그대로 씀 */
 
 
 }
@@ -3183,8 +3088,8 @@ html {
 
 @media (max-width: 48rem) {
   .products_top_stack {
-    right: 1rem;
-    bottom: calc(1rem + var(--top-button-lift, 0px));
+    right: 1.5rem;
+    bottom: calc(1.5rem + var(--top-button-lift, 0px));
     row-gap: 0.24rem;
     width: clamp(1.95rem, 9vw, 2.25rem);
   }
@@ -5074,21 +4979,15 @@ html.is_type_result_open {
 
 
 /* =========================================================
-   PRODUCT CARD 새 디자인 (PC 1025px 이상)
+   PRODUCT CARD 새 디자인 (PC·태블릿·모바일 공통)
    피그마 card 6102:2887
    - 평소: 흰 카드 + 연한 회색 사진 칸 + 회색 해시태그/화살표
    - 호버: 사진 칸이 위(연한 색) → 아래(제품 색) 그라데이션,
            해시태그는 제품 색, 화살표 칸은 살짝 진해짐
-   태블릿·모바일 카드는 기존 모양 그대로
+   태블릿·모바일은 아래쪽 "반응형" 블록이 크기만 따로 맞춤
 ========================================================= */
 
-@media (min-width: 1025px) {
-
-  /* 카드 좌우 간격 20px (위아래 간격은 그대로) */
-  .product_grid {
-    column-gap: 20px;
-  }
-
+@media all {
 
   .product_grid .product_card {
     border: 1px solid var(--makgeolli_light3, #f8f2ef);
@@ -5265,4 +5164,177 @@ html.is_type_result_open {
   .product_grid .product_card > article:focus-within {
     box-shadow: none;
   }
+}
+
+
+/* PC 카드 좌우 간격 20px (위아래 간격은 그대로) */
+@media (min-width: 1025px) {
+  .product_grid {
+    column-gap: 20px;
+  }
+}
+
+
+/* =========================================================
+   PRODUCT CARD 반응형 (태블릿·모바일)
+   위 "새 디자인" 블록의 카드 모양을 그대로 쓰고,
+   예전 태블릿·모바일 카드가 잡아 둔 고정 높이·절대 위치·가로형 배치만 되돌림
+========================================================= */
+
+@media (max-width: 1024px) {
+
+  .product_grid .product_card {
+    width: auto;
+    height: auto;
+    min-height: 0;
+
+    overflow: visible;
+  }
+
+
+  .product_grid .product_card > article {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    height: 100%;
+    min-height: 0;
+    padding: 0.5rem;
+
+    overflow: hidden;
+  }
+
+
+  .product_grid .product_card .product_media {
+    position: relative;
+    inset: auto;
+
+    width: 100%;
+    height: auto;
+    aspect-ratio: 252 / 279;
+  }
+
+
+  .product_grid .product_card .product_bottle,
+  .product_grid .product_card > article:hover .product_bottle,
+  .product_grid .product_card > article:focus-visible .product_bottle,
+  .product_grid .product_card > article:focus-within .product_bottle {
+    top: 50%;
+
+    height: 94.6%;
+
+    transform: translate(-50%, -50%);
+  }
+
+
+  .product_grid .product_card .product_bottle_frame {
+    height: calc(94.6% * var(--bottle_scale, 1));
+  }
+
+
+  /* 예전엔 제목·해시태그를 카드 안에 절대 위치로 박아 둠 */
+  .product_grid .product_card > article .product_name,
+  .product_grid .product_card > article .product_taste {
+    position: static;
+
+    /* 예전 모바일 가로형 카드의 align-self: end / start 가 세로 카드에서 제목을 오른쪽으로 밀었음 */
+    align-self: stretch;
+
+    width: auto;
+    max-width: none;
+
+    overflow: visible;
+
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+
+  .product_grid .product_card > article .product_name {
+    font-size: 1.25rem;
+  }
+
+
+  .product_grid .product_card > article .product_taste {
+    font-size: 0.875rem;
+  }
+
+
+  /* 태블릿용으로 줄여 놓았던 해시태그도 전부 보여 줌 */
+  .product_grid .product_card > article .product_taste[data-tablet-taste] {
+    font-size: 0.875rem;
+  }
+
+  .product_grid .product_card > article .product_taste[data-tablet-taste]::before {
+    content: none;
+  }
+
+
+  .product_name_break {
+    display: inline;
+  }
+
+}
+
+
+/* 태블릿: 한 페이지 2 x 2, 카드 높이는 안의 내용에 맞춤 */
+@media (min-width: 768px) and (max-width: 1024px) {
+
+  .tablet_product_carousel .product_grid {
+    grid-auto-rows: auto;
+
+    /* 카드 사이 간격 12px (폭도 카드 15rem 2장 + 간격 12px 로 맞춤) */
+    gap: 12px;
+
+    width: calc(30rem + 12px);
+  }
+
+}
+
+
+/* 모바일: 2열 x 2줄 (한 페이지 4개). 가로로 누워 있던 카드를 세로형 카드로 */
+@media (max-width: 767px) {
+
+  .product_grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+
+  .product_grid .product_card > article {
+    padding: 0.375rem;
+  }
+
+
+  .product_grid .product_card > article .product_taste {
+    padding-inline: 0.25rem 1.75rem;
+  }
+
+
+  /* 제목은 두 줄에 들어가도록 오른쪽 여백을 좁히고 글자를 조금 줄임 */
+  .product_grid .product_card > article .product_name {
+    margin-top: 0.5rem;
+    padding-inline: 0.25rem 0.5rem;
+
+    font-size: 0.8125rem;
+  }
+
+
+  .product_grid .product_card > article .product_taste,
+  .product_grid .product_card > article .product_taste[data-tablet-taste] {
+    margin-top: 0.125rem;
+
+    font-size: 0.6875rem;
+    line-height: 1.5;
+  }
+
+
+  .product_grid .product_card > article::after {
+    right: 0.375rem;
+    bottom: 0.375rem;
+
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
 }
