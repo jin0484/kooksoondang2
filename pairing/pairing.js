@@ -1191,9 +1191,11 @@
     // 카드가 가로 비율(aspect-ratio)로 크기를 정하는 1101px 이상에서만 동작함
     const recipesHeading = document.querySelector('#drink_recipes .pairing_recipes_heading');
     const recipeFitQuery = window.matchMedia('(min-width: 1101px)');
-    const recipeSnapGap = 24;
-    // 헤더는 스크롤 방향에 따라 숨었다 나타나므로, 보이든 숨든 겹치지 않게 늘 헤더 높이만큼 비워 둠
-    const getSiteHeaderHeight = () => document.querySelector('#site_header')?.offsetHeight || 0;
+    // 제목~카드 덩어리 위아래에 남길 여백. 맞출 때는 이 덩어리를 화면 정중앙에 둠
+    const recipeSnapMargin = 32;
+    const siteHeader = document.querySelector('#site_header');
+    // 맞추는 동안·맞춘 뒤엔 화면 전체를 레시피에 쓰도록 헤더를 접어 둠. 사람이 위로 스크롤하면 common.js 가 평소처럼 다시 꺼냄
+    const hideSiteHeader = () => siteHeader?.classList.add('is_header_hidden');
 
     function fitRecipeCard() {
         const card = recipeViewport.querySelector('.pairing_recipe_card');
@@ -1207,22 +1209,53 @@
         const contentStyle = getComputedStyle(content);
         const neededHeight = Math.ceil(inner.offsetHeight + parseFloat(contentStyle.paddingTop) + parseFloat(contentStyle.paddingBottom) + 2);
         const headingToCard = card.getBoundingClientRect().top - recipesHeading.getBoundingClientRect().top;
-        const availableHeight = Math.floor(window.innerHeight - getSiteHeaderHeight() - recipeSnapGap * 2 - headingToCard);
+        const availableHeight = Math.floor(window.innerHeight - recipeSnapMargin * 2 - headingToCard);
         // 화면이 아주 낮아도 글이 잘리지는 않게 내용 높이보다 작아지지 않음
         recipeViewport.style.setProperty('--recipe-card-max', `${Math.max(availableHeight, neededHeight)}px`);
     }
 
+    // 마지막으로 사람이 스크롤한 방향 (1: 아래로, -1: 위로). 맞추는 동안 생기는 스크롤은 세지 않음
+    let recipeScrollDirection = 1;
+    let recipeLastScrollY = window.scrollY;
+    let isSnappingToRecipes = false;
+
     function snapToRecipes() {
         if (!recipesHeading || !recipeFitQuery.matches || prefersReducedMotion()) return;
-        if (window.siteLenis?.isStopped || resultModal.open) return;
+        if (isSnappingToRecipes || window.siteLenis?.isStopped || resultModal.open) return;
 
-        const target = Math.round(recipesHeading.getBoundingClientRect().top + window.scrollY - getSiteHeaderHeight() - recipeSnapGap);
+        const card = recipeViewport.querySelector('.pairing_recipe_card');
+        if (!card) return;
+        // 제목 위부터 카드 아래까지를 화면 정중앙에. 화면보다 길면(아주 낮은 화면) 제목이 위 여백에 오게
+        const blockTop = recipesHeading.getBoundingClientRect().top + window.scrollY;
+        const blockHeight = card.getBoundingClientRect().bottom - recipesHeading.getBoundingClientRect().top;
+        const centeredTop = (window.innerHeight - blockHeight) / 2;
+        const target = Math.round(blockTop - Math.max(recipeSnapMargin, centeredTop));
         const distance = target - window.scrollY;
-        // 다가오는 중(아래에 있음)이면 화면 1/4 안쪽, 이미 지나쳤으면 1/8 안쪽에서만 끌어당김. 멀면 그냥 둠
-        if (Math.abs(distance) < 4 || distance > window.innerHeight * 0.25 || distance < -window.innerHeight * 0.125) return;
+        // 가던 방향 앞쪽은 화면의 45% 안이면 끌어당기고, 이미 지나친 쪽은 15% 안에서만 되돌림.
+        // 내려오다 멈추든 다시 올라오다 멈추든 똑같이 맞춰지고, 그냥 지나가려는 사람은 붙잡지 않음
+        const ahead = window.innerHeight * 0.45;
+        const behind = window.innerHeight * 0.15;
+        const isWithin = recipeScrollDirection > 0
+            ? distance <= ahead && distance >= -behind
+            : distance >= -ahead && distance <= behind;
+        if (Math.abs(distance) < 4 || !isWithin) return;
 
-        if (window.siteLenis) window.siteLenis.scrollTo(target, { duration: 0.6 });
-        else window.scrollTo({ top: target, behavior: 'smooth' });
+        isSnappingToRecipes = true;
+        hideSiteHeader();
+        const finishSnap = () => {
+            if (!isSnappingToRecipes) return;
+            isSnappingToRecipes = false;
+            recipeLastScrollY = window.scrollY;
+            // 위로 맞췄을 때 common.js 가 마지막 스크롤을 '위로 감'으로 보고 헤더를 다시 꺼내므로, 그 뒤에 접음
+            window.setTimeout(hideSiteHeader, 150);
+        };
+        // 맞추는 도중 사람이 다시 휠을 굴리면 onComplete 가 안 올 수 있어서, 시간이 지나면 무조건 풀어 둠
+        window.setTimeout(finishSnap, 800);
+        if (window.siteLenis) {
+            window.siteLenis.scrollTo(target, { duration: 0.6, onComplete: finishSnap });
+        } else {
+            window.scrollTo({ top: target, behavior: 'smooth' });
+        }
     }
 
     let recipeFitFrame = 0;
@@ -1235,6 +1268,14 @@
     };
     let recipeSnapTimer = 0;
     window.addEventListener('scroll', () => {
+        if (!isSnappingToRecipes) {
+            const delta = window.scrollY - recipeLastScrollY;
+            if (Math.abs(delta) > 1) recipeScrollDirection = Math.sign(delta);
+            recipeLastScrollY = window.scrollY;
+        } else {
+            // 위로 맞추는 중엔 common.js 가 다음 프레임에 헤더를 꺼내므로, 그 다음 프레임에 다시 접음
+            requestAnimationFrame(() => requestAnimationFrame(hideSiteHeader));
+        }
         window.clearTimeout(recipeSnapTimer);
         recipeSnapTimer = window.setTimeout(snapToRecipes, 180);
     }, { passive: true });

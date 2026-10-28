@@ -619,9 +619,10 @@
     --recipe-accent: #542817;
 }
 
+/* 왼쪽 제목 묶음과 오른쪽 술 고르기 묶음은 위쪽을 맞춤 */
 .pairing_page .pairing_recipes_heading {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 2rem;
     padding: 0 var(--pairing-heading-inset);
@@ -629,6 +630,14 @@
 
 .pairing_page .pairing_recipes_heading .pairing_section_heading {
     padding: 0;
+}
+
+.pairing_page .pairing_recipe_nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+    min-width: 0;
 }
 
 .pairing_page .pairing_recipe_controls {
@@ -946,7 +955,7 @@
         flex-direction: column;
     }
 
-    .pairing_page .pairing_recipe_controls {
+    .pairing_page .pairing_recipe_nav {
         align-self: flex-end;
     }
 
@@ -1565,7 +1574,8 @@
 }
 .pairing_page .pairing_carousel_status,
 .pairing_page .pairing_recipe_status {
-    margin: 1rem 0 0;
+    margin: 0;
+    padding-inline: 0.375rem;
     color: var(--pairing-copy);
     font-size: 0.875rem;
     line-height: 1.5;
@@ -1577,10 +1587,6 @@
     cursor: default;
     transform: none;
     background: transparent;
-}
-.pairing_page .pairing_recipe_status {
-    width: min(calc(100% - var(--pairing-heading-inset) - var(--pairing-heading-inset)), 101.25rem);
-    margin-inline: auto;
 }
 .pairing_page .pairing_carousel_arrow:disabled img { transform: none; }
 .pairing_page .pairing_recipe_picker_list {
@@ -1733,9 +1739,12 @@
     .pairing_page .pairing_food_tag { font-size: 0.8125rem; line-height: 1.5; }
     .pairing_page .pairing_carousel_status { margin-top: 0.75rem; text-align: left; }
     .pairing_page .pairing_recipes_heading { gap: 1.5rem; }
+    .pairing_page .pairing_recipe_nav {
+        align-self: stretch;
+        align-items: stretch;
+    }
     .pairing_page .pairing_recipe_controls {
         width: 100%;
-        align-self: stretch;
     }
     .pairing_page .pairing_recipe_picker_list {
         --pairing-recipe-picker-size: 2.75rem;

@@ -170,12 +170,15 @@
             <p>Try it in a refreshing recipe</p>
           </div>
 
-          <div class="pairing_recipe_controls" aria-label="Choose a drink recipe">
-            <div class="pairing_recipe_picker_list" id="pairing_recipe_picker_list"></div>
+          <!-- 오른쪽 묶음: 술 고르기 + 지금 몇 번째인지. 왼쪽 제목과 위쪽을 맞춤 -->
+          <div class="pairing_recipe_nav">
+            <div class="pairing_recipe_controls" aria-label="Choose a drink recipe">
+              <div class="pairing_recipe_picker_list" id="pairing_recipe_picker_list"></div>
+            </div>
+            <p class="pairing_recipe_status" id="pairing_recipe_status" aria-live="polite" aria-atomic="true"></p>
           </div>
         </header>
 
-        <p class="pairing_recipe_status" id="pairing_recipe_status" aria-live="polite" aria-atomic="true"></p>
         <div class="pairing_recipe_viewport" id="pairing_recipe_viewport" tabindex="0" aria-label="Selected drink recipe"></div>
       </div>
     </section>
