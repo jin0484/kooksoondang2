@@ -313,6 +313,60 @@
     prevBtn.addEventListener('click', () => go(-1));
     nextBtn.addEventListener('click', () => go(1));
 
+    // 화살표 말고 옆으로 끌어서(드래그·스와이프) 넘기기.
+    // 왼쪽으로 끌면 다음 제품, 오른쪽으로 끌면 이전 제품. 세로 움직임이 더 크면 그냥 페이지 스크롤로 둠
+    const swipeArea = product.closest('.pd_stage') || product;
+    const SWIPE_DISTANCE = 56; // 이만큼 옆으로 끌면 넘어감(px)
+    let swipe = null;
+
+    swipeArea.addEventListener('pointerdown', (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        if (event.target.closest('button, a')) return; // 화살표 버튼 등은 그냥 클릭
+
+        swipe = { id: event.pointerId, x: event.clientX, y: event.clientY, dragging: false, done: false };
+    });
+
+    swipeArea.addEventListener('pointermove', (event) => {
+        if (!swipe || event.pointerId !== swipe.id || swipe.done) return;
+
+        const dx = event.clientX - swipe.x;
+        const dy = event.clientY - swipe.y;
+
+        if (!swipe.dragging) {
+            if (Math.max(Math.abs(dx), Math.abs(dy)) < 8) return;
+
+            // 세로로 더 많이 움직이면 스크롤이므로 이번 동작은 포기
+            if (Math.abs(dy) > Math.abs(dx)) {
+                swipe = null;
+                return;
+            }
+
+            swipe.dragging = true;
+            swipeArea.classList.add('is_swiping'); // 끄는 동안 글자 선택 방지
+
+            // 끌기 시작한 뒤에만 포인터를 잡음(누르자마자 잡으면 버튼·링크 클릭이 먹힘)
+            if (event.pointerType === 'mouse') {
+                try { swipeArea.setPointerCapture(event.pointerId); } catch { /* 포인터가 이미 끝났으면 무시 */ }
+            }
+        }
+
+        if (Math.abs(dx) >= SWIPE_DISTANCE) {
+            swipe.done = true; // 한 번 끄는 동안 한 장만 넘김
+            go(dx < 0 ? 1 : -1);
+        }
+    });
+
+    const endSwipe = (event) => {
+        if (!swipe || event.pointerId !== swipe.id) return;
+
+        swipeArea.classList.remove('is_swiping');
+        if (swipeArea.hasPointerCapture && swipeArea.hasPointerCapture(event.pointerId)) swipeArea.releasePointerCapture(event.pointerId);
+        swipe = null;
+    };
+
+    swipeArea.addEventListener('pointerup', endSwipe);
+    swipeArea.addEventListener('pointercancel', endSwipe);
+
     // HTML 에는 Draft 슬라이드가 들어 있으므로, 다른 제품으로 열린 경우 그 슬라이드로 바꿔 끼움
     if (index !== 0) {
         firstSlide.replaceWith(buildSlide(PRODUCTS[index]));

@@ -108,8 +108,22 @@ section {
 /* 모바일: 판 높이를 화면 높이의 36% 로 키워 조각 더미가 화면 절반쯤 차지하게 함
    (판이 화면보다 넓어져 양옆은 잘리고, 조각은 보이는 폭 안에서만 쌓임 - banner_physics.js 가 처리) */
 @media (max-width: 767px) {
+    /* 첫 화면에 배너만 꽉 차 있으면 어색하므로 아래를 조금 비워, 흰 아치가 처음부터 보이게 함.
+       병 뚜껑은 흰 영역이 시작되고 5rem 아래(.pd_stage 위 여백)에서 시작하므로
+       4.5rem 이하로만 비우면 뚜껑이 첫 화면에 보이지 않음 */
+    .pd_banner {
+        height: max(var(--banner-h), calc(100vh - 4.5rem));
+    }
+
     .pd_banner_stage {
         width: max(100%, calc(36vh * 1920 / 880));
+    }
+}
+
+/* 태블릿: 같은 방식으로 판 높이를 화면 높이의 48% 로 키워 조각 더미가 배너의 절반쯤 차지하게 함 */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .pd_banner_stage {
+        width: max(100%, calc(48vh * 1920 / 880));
     }
 }
 
@@ -970,16 +984,17 @@ section {
 
 .more_products {
     background: #faf8f7;
-    padding-top: 5rem;
+    /* 위 Features(고정 그릇) 섹션과 간격: 5rem → 8rem */
+    padding-top: 8rem;
     padding-bottom: 7.5rem;
 }
 
 @media (max-width: 1024px) {
-    .more_products { padding-top: 3rem; }
+    .more_products { padding-top: 7rem; }
 }
 
 @media (max-width: 767px) {
-    .more_products { padding-top: 2.5rem; }
+    .more_products { padding-top: 5rem; }
 }
 
 
@@ -1137,4 +1152,17 @@ section {
     .more_products_list {
         column-gap: 20px;
     }
+}
+
+
+/* 제품을 옆으로 끌어서 넘기기 (product_switch.js): 세로 스크롤은 브라우저에 맡기고 가로 끌기만 받음 */
+.pd_stage {
+    touch-action: pan-y;
+}
+
+.pd_stage.is_swiping,
+.pd_stage.is_swiping * {
+    user-select: none;
+    -webkit-user-drag: none;
+    cursor: grabbing;
 }

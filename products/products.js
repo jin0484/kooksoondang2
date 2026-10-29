@@ -1414,9 +1414,6 @@
             startX = event.clientX;
             startY = event.clientY;
             lastDistanceX = 0;
-
-
-            element.setPointerCapture(event.pointerId);
         });
 
 
@@ -1457,6 +1454,14 @@
 
                 isDragging = true;
                 element.classList.add('is_mobile_dragging');
+
+                /* 누르자마자 잡으면 카드 링크의 클릭이 grid 로 넘어가 상세 페이지로 못 감.
+                   실제로 끌기 시작한 뒤에만 포인터를 잡음 */
+                /* 터치는 이미 눌린 요소(링크)가 자동으로 잡고 있어서 여기서 다시 잡으면
+                   lostpointercapture 가 터져 끌기가 바로 끝나 버림. 마우스일 때만 잡음 */
+                if (event.pointerType === 'mouse') {
+                    element.setPointerCapture(event.pointerId);
+                }
             }
 
 
