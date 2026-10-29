@@ -409,8 +409,9 @@
     writing-mode: vertical-rl;
 }
 
+/* 위아래 여백을 같게 해서 내용이 흰 바탕 한가운데에 오게 함 */
 .pairing_page .pairing_food_section {
-    padding-top: clamp(4rem, 5.208vw, 6.25rem);
+    padding-block: clamp(4rem, 5.208vw, 6.25rem);
 }
 
 .pairing_page .pairing_food_explorer {
