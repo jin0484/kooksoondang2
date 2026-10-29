@@ -403,6 +403,9 @@
             const list = document.querySelector('.more_products_list');
             if (!list) return;
 
+            // 제품 이미지를 끌면 이미지만 따로 떨어져 나오는 브라우저 기본 끌기(고스트 이미지)를 막음
+            list.addEventListener('dragstart', (event) => event.preventDefault());
+
             let startX = 0;
             let startScroll = 0;
             let dragging = false;

@@ -10,8 +10,10 @@
    (빠르게 휠을 돌려도 한 장씩 천천히 올라오고, 되돌리면 한 장씩 내려감).
    각 조각의 움직임은 CSS(.pd_card)가 --e 값으로 그림.
 
-   태블릿·모바일(1024px 이하)에서는 조각이 올라오는 동안 아래로 내려가는 스크롤을 막아 두었다가,
-   다 올라와 움직임이 멈추면 풀어 줌 (올라오는 도중 페이지가 넘어가 어긋나지 않게).
+   모든 화면에서 마지막 조각(그릇)이 올라오는 동안에만 아래로 내려가는 스크롤을 막아 두었다가,
+   다 올라와 움직임이 멈추면 풀어 줌 (올라오는 도중 페이지가 넘어가 화면이 잘려 보이지 않게).
+   뒤쪽 카드·가운데 카드가 올라올 때는 스크롤을 막지 않음.
+   스크롤을 아주 빨리 내려 훌쩍 넘어도, 그릇이 올라오기 시작하는 자리로 되돌려 놓음.
    위로 올라가는 스크롤은 언제나 가능.
 ========================================================= */
 
@@ -36,22 +38,24 @@
     let raf = 0;
     let last = 0;
 
-    // ---- 올라오는 동안 아래 스크롤 잠금 (태블릿·모바일) ----
-    const lockQuery = window.matchMedia('(max-width: 1024px)');
+    // ---- 그릇이 올라오는 동안 아래 스크롤 잠금 (모든 화면) ----
     // 이 값(0~1) 이상 올라오면 다 올라온 것으로 봄
     const DONE = 0.97;
     let locked = false;
     let holdY = 0;
     let touchY = 0;
 
-    const isRising = () => target.some((t, i) => t === 1 && current[i] < DONE);
+    // 잠그는 건 마지막 조각(그릇)이 올라오는 동안만. 뒤쪽 카드·가운데 카드가 올라올 때는 스크롤을 그대로 둠
+    const LAST = THRESHOLDS.length - 1;
+    const isRising = () => target[LAST] === 1 && current[LAST] < DONE;
 
-    const syncLock = (engaged = true) => {
-        const should = !reduceMotion && lockQuery.matches && engaged && isRising();
+    // holdFrom: 잠글 때 되돌아갈 위치 후보(마지막으로 넘은 문턱 자리). 너무 많이 내려와 있으면 그 자리로 끌어올림
+    const syncLock = (engaged = true, holdFrom) => {
+        const should = !reduceMotion && engaged && isRising();
 
         if (should && !locked) {
             locked = true;
-            holdY = window.scrollY;
+            holdY = holdFrom === undefined ? window.scrollY : Math.min(window.scrollY, holdFrom);
         } else if (!should && locked) {
             locked = false;
         }
@@ -121,9 +125,12 @@
         // 고정 구간에 들어와 있을 때만 잠금. 이미 잠겨 있으면 내려간 만큼 되돌림
         const engaged = progress > 0;
 
+        // 그릇이 올라오기 시작하는 문턱의 스크롤 위치(섹션 맨 위 + 길이 x 문턱). 빨리 내려 훌쩍 넘었을 때 되돌아갈 자리
+        const holdFrom = window.scrollY + rect.top + total * THRESHOLDS[LAST] + 2;
+
         if (locked) {
             holdY = Math.min(holdY, window.scrollY);
-            if (window.scrollY > holdY + 1) window.scrollTo(0, holdY);
+            if (window.scrollY > holdY + 1) window.scrollTo({ top: holdY, behavior: 'instant' });
         }
 
         if (reduceMotion) {
@@ -133,7 +140,10 @@
         }
 
         kick();
-        syncLock(engaged);
+        syncLock(engaged, holdFrom);
+
+        // 막 잠겼는데 이미 너무 내려와 있으면 바로 끌어올림
+        if (locked && window.scrollY > holdY + 1) window.scrollTo({ top: holdY, behavior: 'instant' });
     };
 
     window.addEventListener('scroll', read, { passive: true });
