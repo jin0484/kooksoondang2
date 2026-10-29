@@ -5296,26 +5296,27 @@ html.is_type_result_open {
   }
 
 
-  .product_grid .product_card > article .product_taste {
-    padding-inline: 0.25rem 1.75rem;
-  }
-
-
   /* 제목은 두 줄에 들어가도록 오른쪽 여백을 좁히고 글자를 조금 줄임 */
   .product_grid .product_card > article .product_name {
     margin-top: 0.5rem;
-    padding-inline: 0.25rem 0.5rem;
+    /* 첫 줄이 길어도(KOREAN GINSENG 등) 두 줄에 들어오도록 오른쪽 여백은 최소로 둠.
+       오른쪽 아래 화살표는 마지막 줄(짧은 단어)과 겹치지 않는지 확인함 */
+    padding-inline: 0.25rem;
+    /* 화살표(2rem)가 커져서 긴 첫 줄(KOREAN GINSENG 등)과도 닿으므로,
+       글을 위로 올려 화살표가 마지막 줄(짧은 단어)과만 같은 높이에 오게 함 */
+    padding-bottom: 1.25rem;
 
-    font-size: 0.8125rem;
+    /* 해시태그가 빠진 만큼 제목을 키움 (0.8125rem → 최대 0.9375rem).
+       폭에 비례해 줄어들어 320~600px 어디서나 모든 제품명이 두 줄에 들어옴 */
+    font-size: clamp(0.75rem, 3.7vw, 0.9375rem);
   }
 
 
+  /* 모바일 카드에서는 해시태그를 보이지 않음 (검색은 글자 내용을 쓰므로 요소는 그대로 둠).
+     해시태그 줄이 한 줄·두 줄로 달라 페이지마다 높이가 달라지던 문제도 같이 없어짐 */
   .product_grid .product_card > article .product_taste,
   .product_grid .product_card > article .product_taste[data-tablet-taste] {
-    margin-top: 0.125rem;
-
-    font-size: 0.6875rem;
-    line-height: 1.5;
+    display: none;
   }
 
 
@@ -5323,8 +5324,9 @@ html.is_type_result_open {
     right: 0.375rem;
     bottom: 0.375rem;
 
-    width: 1.5rem;
-    height: 1.5rem;
+    /* 1.5rem → 2rem (태블릿·PC 와 같은 크기) */
+    width: 2rem;
+    height: 2rem;
   }
 
 }

@@ -36,6 +36,14 @@
         'bottle_small', 'bottle_left', 'bottle_mid', 'can_small', 'bottle_lying', 'bottle_right',
     ];
 
+    // 태블릿·모바일: 연하게 보이는 작은 조각(병 5개와 작은 캔, fill-opacity 0.3 인 것들)만 조금 더 크게 키움.
+    // 진하게 보이는 큰 조각(큰 병·항아리·그릇·큰 캔·링)은 원래 크기 그대로.
+    // 충돌 모양도 같은 배율로 키워야 해서 SVG 좌표 배율도 같이 곱함
+    const LIGHT_PIECES = ['bottle_left', 'bottle_lying', 'bottle_mid', 'bottle_right', 'bottle_small', 'can_small'];
+    const LIGHT_SCALE = 1.3;
+    const smallScreen = window.matchMedia('(max-width: 1024px)').matches;
+    const scaleOf = (img) => (smallScreen && LIGHT_PIECES.some((n) => img.classList.contains('pd_bn_' + n)) ? LIGHT_SCALE : 1);
+
     const imgs = [...stage.querySelectorAll('.pd_banner_item')];
     const byName = (img) => ORDER.findIndex((n) => img.classList.contains('pd_bn_' + n));
 
@@ -72,11 +80,21 @@
     const load = async (img) => {
         const text = await (await fetch(img.currentSrc || img.src)).text();
         const d = /<path[^>]*\sd="([^"]+)"/.exec(text)[1];
-        const { hull, center } = hullFromPath(d);
+        const baseHull = hullFromPath(d);
+
+        // 키우는 조각은 왼쪽 위 모서리(--x, --y)를 기준으로 너비와 충돌 모양을 같은 배율로 키움
+        const k = scaleOf(img);
+        const ox = parseFloat(img.style.getPropertyValue('--x')) / 100 * W;
+        const oy = parseFloat(img.style.getPropertyValue('--y')) / 100 * H;
+        const grow = (p) => ({ x: ox + (p.x - ox) * k, y: oy + (p.y - oy) * k });
+        const hull = k === 1 ? baseHull.hull : baseHull.hull.map(grow);
+        const center = k === 1 ? baseHull.center : grow(baseHull.center);
+
+        if (k !== 1) img.style.setProperty('--w', (parseFloat(img.style.getPropertyValue('--w')) * k) + '%');
 
         const box = {
-            x: parseFloat(img.style.getPropertyValue('--x')) / 100 * W,
-            y: parseFloat(img.style.getPropertyValue('--y')) / 100 * H,
+            x: ox,
+            y: oy,
             w: parseFloat(img.style.getPropertyValue('--w')) / 100 * W,
             h: +img.getAttribute('height') / +img.getAttribute('width') * (parseFloat(img.style.getPropertyValue('--w')) / 100 * W),
         };
