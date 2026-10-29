@@ -156,8 +156,11 @@
     display: flex;
     align-items: stretch;
     width: min(90%, 96.75rem);
-    min-height: clamp(29rem, 35.208vw, 42.25rem);
-    margin: clamp(2.5rem, 3.125vw, 3.75rem) auto 0;
+    /* 원래 최소 높이(--pairing-questionnaire-height)는 두되, 넓은 화면에서 한 화면을 넘지 않게
+       pairing.js 가 상한(--pairing-questionnaire-max)을 넣어 줌. 최소 높이만 줄이므로 내용보다 작아지지는 않음 */
+    --pairing-questionnaire-height: clamp(29rem, 35.208vw, 42.25rem);
+    min-height: min(var(--pairing-questionnaire-height), var(--pairing-questionnaire-max, 100vh));
+    margin: clamp(1.25rem, 1.5vw, 1.75rem) auto 0;
     overflow: hidden;
     overflow-anchor: none;
     border: 1px solid var(--pairing-line);
@@ -363,7 +366,7 @@
 
 @media (min-width: 80rem) {
     .pairing_page .pairing_questionnaire {
-        min-height: clamp(32rem, 39vw, 46rem);
+        --pairing-questionnaire-height: clamp(32rem, 39vw, 46rem);
     }
 }
 
