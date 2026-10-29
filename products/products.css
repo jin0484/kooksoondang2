@@ -5250,21 +5250,9 @@ html.is_type_result_open {
   }
 
 
-  .product_grid .product_card > article .product_name {
-    font-size: 1.25rem;
-  }
-
-
-  .product_grid .product_card > article .product_taste {
-    font-size: 0.875rem;
-  }
-
+  /* 제목·해시태그 글자 크기는 위 "새 디자인" 블록 값(상세 페이지 더보기 카드와 같음)을 그대로 씀 */
 
   /* 태블릿용으로 줄여 놓았던 해시태그도 전부 보여 줌 */
-  .product_grid .product_card > article .product_taste[data-tablet-taste] {
-    font-size: 0.875rem;
-  }
-
   .product_grid .product_card > article .product_taste[data-tablet-taste]::before {
     content: none;
   }
@@ -5281,12 +5269,14 @@ html.is_type_result_open {
 @media (min-width: 768px) and (max-width: 1024px) {
 
   .tablet_product_carousel .product_grid {
+    /* 카드 폭은 상세 페이지 더보기 카드와 같은 값(clamp(12rem, 30vw, 15.5rem)) */
+    grid-template-columns: repeat(2, clamp(12rem, 30vw, 15.5rem));
     grid-auto-rows: auto;
 
-    /* 카드 사이 간격 12px (폭도 카드 15rem 2장 + 간격 12px 로 맞춤) */
+    /* 카드 사이 간격 12px (폭도 카드 2장 + 간격 12px 로 맞춤) */
     gap: 12px;
 
-    width: calc(30rem + 12px);
+    width: calc(clamp(12rem, 30vw, 15.5rem) * 2 + 12px);
   }
 
 }
