@@ -1187,19 +1187,46 @@
     renderRecipePickers();
     renderRecipe();
 
-    // 레시피 섹션이 넓은 화면에서도 한 화면에 다 들어오게: 카드 높이 상한 + 근처에서 멈추면 자석처럼 맞춤.
-    // 카드가 가로 비율(aspect-ratio)로 크기를 정하는 1101px 이상에서만 동작함
-    const recipesHeading = document.querySelector('#drink_recipes .pairing_recipes_heading');
-    const recipeFitQuery = window.matchMedia('(min-width: 1101px)');
-    // 제목~카드 덩어리 위아래에 남길 여백. 맞출 때는 이 덩어리를 화면 정중앙에 둠
-    const recipeSnapMargin = 32;
+    // 퀴즈(Find Your Drink)와 레시피(Drink Recipes) 섹션이 넓은 화면에서도 한 화면에 다 들어오게:
+    // 상자 높이 상한 + 근처에서 멈추면 자석처럼 화면 정중앙에 맞춤. 두 섹션이 좌우로 펼쳐지는 1101px 이상에서만 동작함
+    const sectionFitQuery = window.matchMedia('(min-width: 1101px)');
+    // 제목~상자 덩어리 위아래에 남길 여백
+    const sectionSnapMargin = 32;
     const siteHeader = document.querySelector('#site_header');
-    // 맞추는 동안·맞춘 뒤엔 화면 전체를 레시피에 쓰도록 헤더를 접어 둠. 사람이 위로 스크롤하면 common.js 가 평소처럼 다시 꺼냄
+    // 맞추는 동안·맞춘 뒤엔 화면 전체를 섹션에 쓰도록 헤더를 접어 둠. 사람이 위로 스크롤하면 common.js 가 평소처럼 다시 꺼냄
     const hideSiteHeader = () => siteHeader?.classList.add('is_header_hidden');
 
+    // heading: 덩어리 맨 위(섹션 제목), getBox: 덩어리 맨 아래가 되는 상자
+    const snapSections = [
+        {
+            heading: document.querySelector('#find_your_drink .pairing_section_heading'),
+            getBox: () => questionnaire
+        },
+        {
+            heading: document.querySelector('#drink_recipes .pairing_recipes_heading'),
+            getBox: () => recipeViewport.querySelector('.pairing_recipe_card')
+        }
+    ].filter((section) => section.heading);
+
+    // 제목에서 상자 위까지를 빼고 남는 높이 = 상자가 쓸 수 있는 높이
+    const getAvailableBoxHeight = (heading, box) => Math.floor(
+        window.innerHeight - sectionSnapMargin * 2 - (box.getBoundingClientRect().top - heading.getBoundingClientRect().top)
+    );
+
+    function fitQuestionnaire() {
+        const [quizSection] = snapSections;
+        if (!quizSection || !sectionFitQuery.matches) {
+            questionnaire.style.removeProperty('--pairing-questionnaire-max');
+            return;
+        }
+        // 최소 높이만 줄이는 값이라, 내용이 더 길면 상자는 내용만큼 자람
+        questionnaire.style.setProperty('--pairing-questionnaire-max', `${getAvailableBoxHeight(quizSection.heading, questionnaire)}px`);
+    }
+
     function fitRecipeCard() {
+        const recipesSection = snapSections[1];
         const card = recipeViewport.querySelector('.pairing_recipe_card');
-        if (!card || !recipesHeading || !recipeFitQuery.matches) {
+        if (!card || !recipesSection || !sectionFitQuery.matches) {
             recipeViewport.style.removeProperty('--recipe-card-max');
             return;
         }
@@ -1208,44 +1235,54 @@
         const inner = card.querySelector('.pairing_recipe_inner');
         const contentStyle = getComputedStyle(content);
         const neededHeight = Math.ceil(inner.offsetHeight + parseFloat(contentStyle.paddingTop) + parseFloat(contentStyle.paddingBottom) + 2);
-        const headingToCard = card.getBoundingClientRect().top - recipesHeading.getBoundingClientRect().top;
-        const availableHeight = Math.floor(window.innerHeight - recipeSnapMargin * 2 - headingToCard);
         // 화면이 아주 낮아도 글이 잘리지는 않게 내용 높이보다 작아지지 않음
-        recipeViewport.style.setProperty('--recipe-card-max', `${Math.max(availableHeight, neededHeight)}px`);
+        recipeViewport.style.setProperty('--recipe-card-max', `${Math.max(getAvailableBoxHeight(recipesSection.heading, card), neededHeight)}px`);
+    }
+
+    function fitSections() {
+        fitQuestionnaire();
+        fitRecipeCard();
     }
 
     // 마지막으로 사람이 스크롤한 방향 (1: 아래로, -1: 위로). 맞추는 동안 생기는 스크롤은 세지 않음
-    let recipeScrollDirection = 1;
-    let recipeLastScrollY = window.scrollY;
-    let isSnappingToRecipes = false;
+    let sectionScrollDirection = 1;
+    let sectionLastScrollY = window.scrollY;
+    let isSnappingToSection = false;
 
-    function snapToRecipes() {
-        if (!recipesHeading || !recipeFitQuery.matches || prefersReducedMotion()) return;
-        if (isSnappingToRecipes || window.siteLenis?.isStopped || resultModal.open) return;
+    function snapToNearestSection() {
+        if (!sectionFitQuery.matches || prefersReducedMotion()) return;
+        if (isSnappingToSection || window.siteLenis?.isStopped || resultModal.open) return;
 
-        const card = recipeViewport.querySelector('.pairing_recipe_card');
-        if (!card) return;
-        // 제목 위부터 카드 아래까지를 화면 정중앙에. 화면보다 길면(아주 낮은 화면) 제목이 위 여백에 오게
-        const blockTop = recipesHeading.getBoundingClientRect().top + window.scrollY;
-        const blockHeight = card.getBoundingClientRect().bottom - recipesHeading.getBoundingClientRect().top;
-        const centeredTop = (window.innerHeight - blockHeight) / 2;
-        const target = Math.round(blockTop - Math.max(recipeSnapMargin, centeredTop));
-        const distance = target - window.scrollY;
         // 가던 방향 앞쪽은 화면의 45% 안이면 끌어당기고, 이미 지나친 쪽은 15% 안에서만 되돌림.
         // 내려오다 멈추든 다시 올라오다 멈추든 똑같이 맞춰지고, 그냥 지나가려는 사람은 붙잡지 않음
         const ahead = window.innerHeight * 0.45;
         const behind = window.innerHeight * 0.15;
-        const isWithin = recipeScrollDirection > 0
-            ? distance <= ahead && distance >= -behind
-            : distance >= -ahead && distance <= behind;
-        if (Math.abs(distance) < 4 || !isWithin) return;
+        const candidates = snapSections.map(({ heading, getBox }) => {
+            const box = getBox();
+            if (!box) return null;
+            // 제목 위부터 상자 아래까지를 화면 정중앙에. 화면보다 길면(아주 낮은 화면) 제목이 위 여백에 오게
+            const headingTop = heading.getBoundingClientRect().top;
+            const blockHeight = box.getBoundingClientRect().bottom - headingTop;
+            const centeredTop = (window.innerHeight - blockHeight) / 2;
+            const target = Math.round(headingTop + window.scrollY - Math.max(sectionSnapMargin, centeredTop));
+            return { target, distance: target - window.scrollY };
+        }).filter((candidate) => candidate && (sectionScrollDirection > 0
+            ? candidate.distance <= ahead && candidate.distance >= -behind
+            : candidate.distance >= -ahead && candidate.distance <= behind));
+        if (!candidates.length) return;
 
-        isSnappingToRecipes = true;
+        // 둘 다 범위 안이면 더 가까운 섹션으로
+        const { target, distance } = candidates.reduce((nearest, candidate) => (
+            Math.abs(candidate.distance) < Math.abs(nearest.distance) ? candidate : nearest
+        ));
+        if (Math.abs(distance) < 4) return;
+
+        isSnappingToSection = true;
         hideSiteHeader();
         const finishSnap = () => {
-            if (!isSnappingToRecipes) return;
-            isSnappingToRecipes = false;
-            recipeLastScrollY = window.scrollY;
+            if (!isSnappingToSection) return;
+            isSnappingToSection = false;
+            sectionLastScrollY = window.scrollY;
             // 위로 맞췄을 때 common.js 가 마지막 스크롤을 '위로 감'으로 보고 헤더를 다시 꺼내므로, 그 뒤에 접음
             window.setTimeout(hideSiteHeader, 150);
         };
@@ -1258,34 +1295,34 @@
         }
     }
 
-    let recipeFitFrame = 0;
-    const scheduleRecipeFit = () => {
-        if (recipeFitFrame) return;
-        recipeFitFrame = requestAnimationFrame(() => {
-            recipeFitFrame = 0;
-            fitRecipeCard();
+    let sectionFitFrame = 0;
+    const scheduleSectionFit = () => {
+        if (sectionFitFrame) return;
+        sectionFitFrame = requestAnimationFrame(() => {
+            sectionFitFrame = 0;
+            fitSections();
         });
     };
-    let recipeSnapTimer = 0;
+    let sectionSnapTimer = 0;
     window.addEventListener('scroll', () => {
-        if (!isSnappingToRecipes) {
-            const delta = window.scrollY - recipeLastScrollY;
-            if (Math.abs(delta) > 1) recipeScrollDirection = Math.sign(delta);
-            recipeLastScrollY = window.scrollY;
+        if (!isSnappingToSection) {
+            const delta = window.scrollY - sectionLastScrollY;
+            if (Math.abs(delta) > 1) sectionScrollDirection = Math.sign(delta);
+            sectionLastScrollY = window.scrollY;
         } else {
             // 위로 맞추는 중엔 common.js 가 다음 프레임에 헤더를 꺼내므로, 그 다음 프레임에 다시 접음
             requestAnimationFrame(() => requestAnimationFrame(hideSiteHeader));
         }
-        window.clearTimeout(recipeSnapTimer);
-        recipeSnapTimer = window.setTimeout(snapToRecipes, 180);
+        window.clearTimeout(sectionSnapTimer);
+        sectionSnapTimer = window.setTimeout(snapToNearestSection, 180);
     }, { passive: true });
-    window.addEventListener('resize', scheduleRecipeFit, { passive: true });
-    window.addEventListener('load', scheduleRecipeFit, { once: true });
-    document.fonts?.ready.then(scheduleRecipeFit);
+    window.addEventListener('resize', scheduleSectionFit, { passive: true });
+    window.addEventListener('load', scheduleSectionFit, { once: true });
+    document.fonts?.ready.then(scheduleSectionFit);
     // 레시피를 바꾸면 글 양이 달라지므로 다시 잼
     const recipeInner = recipeViewport.querySelector('.pairing_recipe_inner');
-    if (recipeInner && 'ResizeObserver' in window) new ResizeObserver(scheduleRecipeFit).observe(recipeInner);
-    fitRecipeCard();
+    if (recipeInner && 'ResizeObserver' in window) new ResizeObserver(scheduleSectionFit).observe(recipeInner);
+    fitSections();
 
     // 다른 탭 카드 사진을 한가할 때 미리 받아 둬서, 탭을 누르면 캐시에서 바로 뜨게 함
     const preloadFoodImages = () => {
