@@ -1248,35 +1248,54 @@
     let sectionScrollDirection = 1;
     let sectionLastScrollY = window.scrollY;
     let isSnappingToSection = false;
+    // 마지막으로 맞춰 준 섹션. 거기서 벗어나려고 스크롤하는 사람을 다시 붙잡지 않으려고 기억해 둠
+    let lastSnappedSection = -1;
 
     function snapToNearestSection() {
         if (!sectionFitQuery.matches || prefersReducedMotion()) return;
         if (isSnappingToSection || window.siteLenis?.isStopped || resultModal.open) return;
 
-        // 가던 방향 앞쪽은 화면의 45% 안이면 끌어당기고, 이미 지나친 쪽은 15% 안에서만 되돌림.
-        // 내려오다 멈추든 다시 올라오다 멈추든 똑같이 맞춰지고, 그냥 지나가려는 사람은 붙잡지 않음
-        const ahead = window.innerHeight * 0.45;
-        const behind = window.innerHeight * 0.15;
-        const candidates = snapSections.map(({ heading, getBox }) => {
+        const viewportHeight = window.innerHeight;
+        const candidates = snapSections.map(({ heading, getBox }, index) => {
             const box = getBox();
             if (!box) return null;
             // 제목 위부터 상자 아래까지를 화면 정중앙에. 화면보다 길면(아주 낮은 화면) 제목이 위 여백에 오게
-            const headingTop = heading.getBoundingClientRect().top;
-            const blockHeight = box.getBoundingClientRect().bottom - headingTop;
-            const centeredTop = (window.innerHeight - blockHeight) / 2;
-            const target = Math.round(headingTop + window.scrollY - Math.max(sectionSnapMargin, centeredTop));
-            return { target, distance: target - window.scrollY };
-        }).filter((candidate) => candidate && (sectionScrollDirection > 0
-            ? candidate.distance <= ahead && candidate.distance >= -behind
-            : candidate.distance >= -ahead && candidate.distance <= behind));
-        if (!candidates.length) return;
+            const blockTop = heading.getBoundingClientRect().top;
+            const blockBottom = box.getBoundingClientRect().bottom;
+            const blockHeight = blockBottom - blockTop;
+            const centeredTop = (viewportHeight - blockHeight) / 2;
+            const target = Math.round(blockTop + window.scrollY - Math.max(sectionSnapMargin, centeredTop));
+            // 이 덩어리가 지금 화면을 얼마나 차지하는지 (덩어리가 화면보다 크면 화면 높이 기준)
+            const visible = Math.max(0, Math.min(blockBottom, viewportHeight) - Math.max(blockTop, 0));
+            const coverage = visible / Math.min(blockHeight, viewportHeight);
+            return { index, target, distance: target - window.scrollY, coverage };
+        }).filter(Boolean);
 
-        // 둘 다 범위 안이면 더 가까운 섹션으로
-        const { target, distance } = candidates.reduce((nearest, candidate) => (
-            Math.abs(candidate.distance) < Math.abs(nearest.distance) ? candidate : nearest
+        // 방금 맞춰 준 섹션이 화면에서 거의 빠졌으면 잊음. 나중에 다시 다가오면 새로 맞춰 줌
+        const lastSnapped = candidates.find((candidate) => candidate.index === lastSnappedSection);
+        if (!lastSnapped || lastSnapped.coverage < 0.3) lastSnappedSection = -1;
+
+        const eligible = candidates.filter((candidate) => {
+            // 화면의 60% 이상을 차지한 채 멈췄으면, 내려오다 지나쳤든 올라오다 멈췄든 그 섹션으로 맞춤
+            if (candidate.coverage < 0.6) return false;
+            // 다만 맞춰 둔 섹션에서 벗어나는 쪽으로 스크롤 중이면 붙잡지 않음 (아주 살짝 밀린 건 되돌림)
+            const isLeaving = candidate.index === lastSnappedSection
+                && Math.sign(-candidate.distance) === sectionScrollDirection
+                && Math.abs(candidate.distance) > viewportHeight * 0.08;
+            return !isLeaving;
+        });
+        if (!eligible.length) return;
+
+        // 화면을 더 많이 차지한 섹션으로
+        const { index, target, distance } = eligible.reduce((best, candidate) => (
+            candidate.coverage > best.coverage ? candidate : best
         ));
-        if (Math.abs(distance) < 4) return;
+        if (Math.abs(distance) < 4) {
+            lastSnappedSection = index;
+            return;
+        }
 
+        lastSnappedSection = index;
         isSnappingToSection = true;
         hideSiteHeader();
         const finishSnap = () => {
