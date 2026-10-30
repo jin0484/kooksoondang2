@@ -121,34 +121,44 @@
 
   <main class="products_main">
 
-    <!-- ---------- Products Hero ---------- -->
-    <section class="products_hero" id="products_hero" aria-labelledby="products_hero_title">
+    <!-- ---------- Products Banner (피그마 curation 6127:4159) ---------- -->
+    <section class="products_banner" id="products_banner" aria-labelledby="products_banner_title">
 
-      <div class="products_hero_inner">
-        <h1 class="products_hero_title" id="products_hero_title">
-          <span>KOREAN TRADITIONAL</span>
-          <span>HERBAL RICE WINE</span>
+      <!-- 배경 도형: 시안(1920 x 1084) 좌표를 % 로 옮긴 것. 위치(--x --y), 폭(--w), 기울기(--r) -->
+      <div class="products_banner_stage" aria-hidden="true">
+        <img class="banner_shape banner_shape_multiply" src="./products_asset/banner/union_a.svg" alt="" width="681" height="553" style="--x:-0.3644%;--y:74.4476%;--w:35.4688%">
+        <img class="banner_shape banner_shape_multiply" src="./products_asset/banner/union_b.svg" alt="" width="1046.24" height="881" style="--x:53.5692%;--y:39.9785%;--w:54.4917%;--r:rotate(-15.88deg)">
+        <img class="banner_shape banner_shape_multiply" src="./products_asset/banner/union_c.svg" alt="" width="1300.97" height="1095.5" style="--x:-31.2894%;--y:-62.8454%;--w:67.7589%;--r:rotate(46.11deg)">
+        <img class="banner_shape" src="./products_asset/banner/subtract_a.svg" alt="" width="673.681" height="520.704" style="--x:0.4082%;--y:-26.0646%;--w:35.0876%;--r:rotate(20.5deg)">
+        <img class="banner_shape" src="./products_asset/banner/best_bottle.svg" alt="" width="445.792" height="624.245" style="--x:-0.9542%;--y:66.8564%;--w:23.2183%;--r:rotate(-28.75deg)">
+        <img class="banner_shape" src="./products_asset/banner/best_bottle2.svg" alt="" width="193.053" height="530.552" style="--x:91.9426%;--y:60.588%;--w:10.0548%;--r:rotate(-25.36deg)">
+        <img class="banner_shape" src="./products_asset/banner/banner_bottle.svg" alt="" width="318.282" height="571.552" style="--x:8.7164%;--y:-27.4681%;--w:16.5772%;--r:rotate(129.37deg) skewX(-2.3deg)">
+        <img class="banner_shape" src="./products_asset/banner/best_cup.svg" alt="" width="450" height="308" style="--x:-9.1287%;--y:26.3384%;--w:23.4375%;--r:rotate(34.57deg)">
+        <img class="banner_shape" src="./products_asset/banner/best_ring.svg" alt="" width="352" height="352" style="--x:42.8646%;--y:-18.2657%;--w:18.3333%">
+        <img class="banner_shape" src="./products_asset/banner/banner_bowl.svg" alt="" width="695.917" height="278.18" style="--x:81.3022%;--y:29.6138%;--w:36.2457%;--r:rotate(23.13deg) skewX(-1.52deg)">
+        <img class="banner_shape" src="./products_asset/banner/union_d.svg" alt="" width="243.632" height="467.616" style="--x:78.4978%;--y:-23.518%;--w:12.6892%;--r:rotate(-102.03deg)">
+        <img class="banner_shape" src="./products_asset/banner/union_e.svg" alt="" width="245.632" height="469.616" style="--x:77.1705%;--y:-20.2831%;--w:12.7933%;--r:rotate(-108.66deg)">
+        <img class="banner_shape" src="./products_asset/banner/subtract_b.svg" alt="" width="486.327" height="468.435" style="--x:32.0536%;--y:82.4503%;--w:25.3295%;--r:rotate(-4.98deg)">
+        <img class="banner_shape" src="./products_asset/banner/best_cup2.svg" alt="" width="338.226" height="315.108" style="--x:36.797%;--y:85.7405%;--w:17.6159%;--r:rotate(-114.38deg) skewX(1.17deg)">
+        <img class="banner_shape" src="./products_asset/banner/brand_history_pet.svg" alt="" width="251.208" height="839.143" style="--x:64.4303%;--y:64.9847%;--w:13.0838%;--r:rotate(41.64deg)">
+      </div>
+
+      <div class="products_banner_copy">
+        <h1 class="products_banner_title" id="products_banner_title">
+          <span class="products_banner_line">
+            <span class="products_banner_plain">Brewed from</span>
+            <span class="products_banner_hand">Rice</span>
+          </span>
+          <span class="products_banner_line">
+            <span class="products_banner_plain">Shared with</span>
+            <span class="products_banner_hand">Warmth</span>
+          </span>
         </h1>
+
+        <p class="products_banner_sub">
+          Korea&rsquo;s traditional makgeolli, fresh in every bottle.
+        </p>
       </div>
-
-      <div class="products_hero_stage" aria-hidden="true">
-
-        <img class="hero_splash" src="./products_asset/img/splash.svg" alt="">
-
-        <img class="hero_bottle hero_bottle_rice" src="./products_asset/img/rice_makgeolli.png" alt="">
-
-        <img class="hero_bottle hero_bottle_draft" src="./products_asset/img/draft_makgeolli.png" alt="">
-
-        <img class="hero_bottle hero_bottle_prebiotics" src="./products_asset/img/1000_makgeolli.png" alt="">
-
-        <img class="hero_bottle hero_bottle_strawberry" src="./products_asset/img/strawberry_makgeolli.png" alt="">
-
-        <img class="hero_bottle hero_bottle_center" src="../asset/img/bekseju_bottle.png" alt="">
-
-      </div>
-
-      <!-- 스크롤 전환 시 검정 Fade -->
-      <div class="products_hero_dim" aria-hidden="true"></div>
 
     </section>
 

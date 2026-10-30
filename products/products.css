@@ -5337,3 +5337,296 @@ html.is_type_result_open {
   -webkit-user-drag: none;
   user-select: none;
 }
+
+
+/* =========================================================
+   PRODUCTS BANNER (피그마 curation 6127:4159)
+   예전 병 4개 + 백세주 히어로를 대신하는 배너.
+   베이지 바탕 위에 병·컵·링 같은 도형이 기울어져 흩어져 있고, 가운데에 문구가 놓임.
+   도형 좌표는 시안(1920 x 1084)을 stage 크기에 대한 % 로 옮긴 값
+========================================================= */
+
+.products_banner {
+  --banner_h: max(100svh, 34rem);
+
+  position: relative;
+
+  width: 100%;
+  height: var(--banner_h);
+
+  overflow: hidden;
+
+  isolation: isolate;
+
+  z-index: 1;
+
+  background: var(--makgeolli_light2, #f6f0ec);
+
+  /* 판(stage)을 transform 없이 가운데에 놓기 위해 flex 로 맞춤 (아래 설명) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* 시안 그레인(알갱이) 효과: 배너 전체 위에 깔림. 도형 위, 글자 아래.
+   제품 상세 배너와 같은 노이즈 파일·밀도·투명도 */
+.products_banner::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  background: url("./products_asset/banner/banner_noise.svg") 0 0 / 900px 412px repeat;
+
+  opacity: 0.15;
+}
+
+
+/* 시안 비율(1920 x 1084)을 유지하는 판. 가로가 모자라면 판이 더 넓어지고 양옆이 잘림.
+   가운데 정렬을 transform: translate 로 하면 판이 새 쌓임 맥락이 되어, 안의 도형의
+   mix-blend-mode: multiply 가 배너 베이지 바탕과 섞이지 못하고 그냥 올라감.
+   그래서 부모의 flex 가운데 정렬(넘쳐도 양쪽으로 똑같이 넘침)을 씀 */
+.products_banner_stage {
+  position: relative;
+
+  flex: none;
+
+  width: max(100%, calc(var(--banner_h) * 1920 / 1084));
+
+  aspect-ratio: 1920 / 1084;
+
+  pointer-events: none;
+}
+
+
+.banner_shape {
+  position: absolute;
+
+  top: var(--y);
+  left: var(--x);
+
+  width: var(--w);
+  height: auto;
+
+  max-width: none;
+
+  transform: var(--r, none);
+
+  pointer-events: none;
+
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+
+/* 시안에서 큰 얼룩 도형 세 개는 곱하기 혼합 */
+.banner_shape_multiply {
+  mix-blend-mode: multiply;
+}
+
+
+.products_banner_copy {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* 헤더(약 100px)에 가리지 않게 위 여백을 더 둠 */
+  padding: 6rem 1.5rem 2rem;
+
+  gap: clamp(1.5rem, 3.125vw, 3.75rem);
+
+  text-align: center;
+
+  color: var(--bekseju_darker_warm, #272625);
+}
+
+
+.products_banner_title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: clamp(0.5rem, 0.8333vw, 1rem);
+
+  margin: 0;
+
+  font-weight: 400;
+}
+
+
+.products_banner_line {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  gap: clamp(0.375rem, 0.625vw, 0.75rem);
+
+  white-space: nowrap;
+}
+
+
+/* 시안: Albert Sans 86px, 자간 -2%. 화면이 줄면 폭에 비례해 작아짐 */
+.products_banner_plain {
+  font-family: var(--font-Albert_Sans, 'Albert Sans', sans-serif);
+  font-size: min(5.375rem, 8vw);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+
+/* 시안: 손글씨체(ROH HOE-CHAN) 110px, 자간 -2% */
+.products_banner_hand {
+  font-family: 'ROH HOE-CHAN', var(--font-Albert_Sans, 'Albert Sans', sans-serif);
+  font-size: min(6.875rem, 10.2vw);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+
+
+/* 시안: Albert Sans 32px, 색 #5D504A */
+.products_banner_sub {
+  margin: 0;
+
+  max-width: 100%;
+
+  font-family: var(--font-Albert_Sans, 'Albert Sans', sans-serif);
+  font-size: clamp(0.9375rem, 3.2vw, 2rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+
+  color: var(--bekseju_dark2, #5d504a);
+}
+
+
+/* 모바일: 판 높이를 따로 맞추면 가운데만 크게 잘려 도형이 거의 안 보이므로,
+   판 폭을 화면 폭의 1.75배로 잡아 도형이 더 많이 보이게 함 (위아래 남는 곳은 베이지 바탕) */
+@media (max-width: 767px) {
+  .products_banner {
+    --banner_h: clamp(28rem, 75svh, 40rem);
+  }
+
+  .products_banner_stage {
+    width: 175vw;
+  }
+}
+
+
+/* =========================================================
+   배너 제목 채우기 (메인 히어로 제목과 같은 효과: main.css .hero_title.is_pour_ready)
+   페이지에 들어올 때 한 번, 잔에 술이 차오르듯 아래에서 위로 글자색이 채워짐.
+   제목 전체에 배경 하나(물결 경계 + 주황 선)를 깔고 글자 모양으로 오려 냄.
+   배경 이미지를 글자 높이의 두 배로 잡아 위 절반(투명)에서 아래 절반(글자색)으로 밀어 올림.
+   (data URI 안에서는 CSS 변수를 못 쓰므로 글자색 #272625 / 주황 #F29556 을 직접 적음)
+   재생이 끝나면 products.js 가 클래스를 떼어 평범하게 칠해진 글자로 되돌림
+========================================================= */
+
+/* 배경이 글자 전체에 닿도록 제목 상자를 가장 긴 줄에 맞춤 (부모가 가운데 정렬) */
+.products_banner_title {
+  width: max-content;
+  max-width: 100%;
+
+  /* 손글씨체 글자는 끝이 글자 상자 밖으로 조금 삐져나옴(특히 Warmth 의 h).
+     채우기 배경은 상자 안에만 칠해져서 삐져나온 끝이 차오르는 동안 잘려 보였음.
+     상자를 사방으로 넓히고(padding) 같은 만큼 바깥 여백을 빼서(margin) 자리는 그대로 둠 */
+  padding: 0.75rem 1.5rem;
+  margin: -0.75rem -1.5rem;
+}
+
+.products_banner_copy {
+  --banner-pour-delay: 120ms;
+  --banner-pour-duration: 900ms;
+}
+
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  .products_banner_title.is_pour_ready {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 200' preserveAspectRatio='none'%3E%3Cpath d='M0 100Q12.5 95.5 25 100T50 100T75 100T100 100V200H0Z' fill='%23272625'/%3E%3Cpath d='M0 100Q12.5 95.5 25 100T50 100T75 100T100 100' fill='none' stroke='%23F29556' stroke-width='1.2'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 50% 200%;
+    background-position: 0% 0%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* 처음에 흐르기 시작해 끝에서 잦아드는 완만한 곡선 */
+  .products_banner_title.is_pour_running {
+    animation: products_banner_pour var(--banner-pour-duration) cubic-bezier(0.4, 0, 0.2, 1) var(--banner-pour-delay) forwards;
+  }
+}
+
+@keyframes products_banner_pour {
+  from {
+    background-position: 0% 0%;
+  }
+
+  to {
+    background-position: 100% 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .products_banner_title.is_pour_ready,
+  .products_banner_title.is_pour_running {
+    animation: none;
+    background-image: none;
+    color: var(--bekseju_darker_warm, #272625);
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+
+/* =========================================================
+   배너 도형 흔들림 (products.js "배너 도형 흔들림")
+   마우스가 있는 PC 에서만 JS 가 .is_banner_playful 을 붙임.
+   그때만 도형이 커서를 받고(평소엔 pointer-events: none), 글자 묶음은 커서를 가로채지 않게 함.
+   큰 얼룩 세 개(banner_shape_multiply)는 배경 질감이라 반응하지 않음
+========================================================= */
+
+.products_banner.is_banner_playful .banner_shape:not(.banner_shape_multiply) {
+  pointer-events: auto;
+}
+
+.products_banner.is_banner_playful .products_banner_copy {
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   배너 부제 나타나기 (products.js "배너 부제 나타나기")
+   제목이 다 채워진 뒤 부제 문장 전체가 아래에서 살짝 올라오며 부드럽게 나타남.
+   글자를 하나씩 끊어 찍던 타자 방식은 뚝뚝 끊겨 보여서 문장 전체가 한 번에 스르륵 나타나는 방식으로 바꿈
+========================================================= */
+
+.products_banner_sub.is_reveal_ready {
+  opacity: 0;
+
+  transform: translateY(0.75rem);
+}
+
+.products_banner_sub.is_reveal_running {
+  opacity: 1;
+
+  transform: translateY(0);
+
+  transition:
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
