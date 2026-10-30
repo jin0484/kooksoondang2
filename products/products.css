@@ -469,9 +469,8 @@ html {
   border-radius:
     2rem 2rem 0 0;
 
-  box-shadow:
-    0 -2rem 4rem
-    rgba(0, 0, 0, 0.12);
+  /* 위로 번지던 그림자(0 -2rem 4rem)는 배너 아래쪽이 지저분해 보여서 뺌 */
+  box-shadow: none;
 
   overflow: hidden;
 
@@ -5072,7 +5071,7 @@ html.is_type_result_open {
   .product_grid .product_card > article .product_name,
   .product_grid .product_card > article .product_taste {
     margin: 0;
-    padding-inline: 0.25rem 2.75rem;
+    padding-inline: 0.25rem 3.25rem;
 
     text-align: left;
   }
@@ -5121,8 +5120,8 @@ html.is_type_result_open {
     right: 0.75rem;
     bottom: 0.75rem;
 
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
 
     background: url('products_asset/icon/card_arrow.svg') center / contain no-repeat;
   }
@@ -5528,8 +5527,11 @@ html.is_type_result_open {
 /* 모바일: 판 높이를 따로 맞추면 가운데만 크게 잘려 도형이 거의 안 보이므로,
    판 폭을 화면 폭의 1.75배로 잡아 도형이 더 많이 보이게 함 (위아래 남는 곳은 베이지 바탕) */
 @media (max-width: 767px) {
+  /* 모바일 배너 높이는 메인 히어로가 실제로 차지하는 높이와 맞춤.
+     메인 히어로는 글 묶음 높이로 정해지는 구간이 있어, 폭별로 잰 값(481px 601 / 520px 584 / 600px 590 / 767px 618)에
+     맞는 식을 씀. 481~520px 에서는 줄어들고(-0.436px/px), 520px 부터는 완만하게 늘어남(+0.14px/px) */
   .products_banner {
-    --banner_h: max(100svh, 28rem);
+    --banner_h: max(calc(601px - (100vw - 481px) * 0.436), calc(584px + (100vw - 520px) * 0.14));
   }
 
   /* 배너가 화면을 가득 채우므로 판도 높이에 맞춰 키움(도형이 가운데 띠에만 몰리지 않게) */
@@ -5540,6 +5542,19 @@ html.is_type_result_open {
   /* 모바일: 흰 영역 제목이 맨 위에서 53px 아래에서 시작하므로 올라오는 높이를 2.5rem(40px) 으로 */
   .products_banner + .products_content_layer {
     margin-top: -2.5rem;
+  }
+}
+
+/* 메인 히어로: 461~480px 는 40rem(640px), 460px 이하는 INTRO/TEST START 버튼이 두 줄로 쌓여 693px */
+@media (max-width: 30rem) {
+  .products_banner {
+    --banner_h: 40rem;
+  }
+}
+
+@media (max-width: 28.75rem) {
+  .products_banner {
+    --banner_h: 43.3125rem;
   }
 }
 
@@ -5625,6 +5640,13 @@ html.is_type_result_open {
   pointer-events: none;
 }
 
+/* 글자 묶음 전체는 커서를 통과시키지만, 제목과 부제 글자 상자만큼은 커서를 받게 해서
+   마우스로 긁어 선택·복사할 수 있게 함 (글자 상자 밖의 빈 곳은 그대로 도형이 받음) */
+.products_banner.is_banner_playful .products_banner_title,
+.products_banner.is_banner_playful .products_banner_sub {
+  pointer-events: auto;
+}
+
 
 /* =========================================================
    배너 부제 나타나기 (products.js "배너 부제 나타나기")
@@ -5646,4 +5668,25 @@ html.is_type_result_open {
   transition:
     opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* =========================================================
+   배너 문구 - 태블릿(768 ~ 1279px) 글자 크기
+   ABOUT BRAND 타이틀(aboutbrand.css 의 .intro_title, 같은 768 ~ 1279px 구간)과 같은 크기로 줄임.
+   손글씨체는 시안 비율(110 / 86 = 1.279배)을 그대로 유지, 부제도 같은 비율로 줄임
+========================================================= */
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .products_banner_plain {
+    font-size: clamp(2.5rem, 6.8vw, 3.25rem);
+  }
+
+  .products_banner_hand {
+    font-size: calc(clamp(2.5rem, 6.8vw, 3.25rem) * 1.279);
+  }
+
+  .products_banner_sub {
+    font-size: clamp(1rem, 2.5vw, 1.625rem);
+  }
 }
