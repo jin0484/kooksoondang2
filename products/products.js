@@ -1730,17 +1730,6 @@
         if (!button) return;
 
 
-        /* 모바일에서는 선택된 버튼이 카테고리 펼치기 버튼을 겸함. 펼친 상태에서 다시 누르면 선택 취소 */
-        if (
-            mobileCarouselQuery.matches &&
-            button.classList.contains('is_active') &&
-            !isCategoryMenuOpen
-        ) {
-            setCategoryMenuOpen(true);
-            return;
-        }
-
-
         /* 준비중 카테고리는 거르지 않고 안내만 띄움 */
         if (
             button.hasAttribute('data-coming-soon')
@@ -1796,16 +1785,9 @@
             isMobile && isCategoryMenuOpen
         );
 
+        /* 모바일 탭은 드롭다운이 아니라 2 x 2 버튼이라 aria-expanded 를 쓰지 않음 */
         categoryButtons.forEach((button) => {
-
-            if (isMobile && button.classList.contains('is_active')) {
-                button.setAttribute(
-                    'aria-expanded',
-                    String(isCategoryMenuOpen)
-                );
-            } else {
-                button.removeAttribute('aria-expanded');
-            }
+            button.removeAttribute('aria-expanded');
         });
     }
 
@@ -1857,7 +1839,6 @@
         }
 
         event.preventDefault();
-        setCategoryMenuOpen(true);
         categoryButtons[nextIndex]?.focus({ preventScroll: true });
     }
 
