@@ -160,6 +160,11 @@
         </p>
       </div>
 
+      <!-- 아래로 스크롤하라는 표시 (ABOUT BRAND 페이지 intro 화살표와 같은 그림·움직임) -->
+      <a class="products_banner_arrow" href="#experience_filter" aria-label="Scroll down to products">
+        <img src="./products_asset/banner/scroll_arrow.svg" alt="" aria-hidden="true" width="35" height="41">
+      </a>
+
     </section>
 
 
@@ -177,7 +182,7 @@
         <div class="products_container">
 
           <h2 class="experience_filter_title" id="experience_filter_title">
-            What are you craving today?
+            What Are You Craving Today?
           </h2>
 
 
@@ -187,8 +192,19 @@
               Search products
             </label>
 
-            <input class="craving_search_input" id="craving_search_input" type="search"
-              placeholder="What about &ldquo;Makgeolli&rdquo;?" autocomplete="off" data-craving-input>
+            <div class="craving_search_field">
+
+              <input class="craving_search_input" id="craving_search_input" type="search"
+                autocomplete="off" data-craving-input>
+
+              <!-- 입력창이 비어 있을 때만 보이는 안내 글. 가운데 낱말은 products.js 가 돌아가며 바꿈 -->
+              <span class="craving_placeholder" aria-hidden="true" data-craving-placeholder>
+                <span class="craving_placeholder_lead">What about</span>
+                <span class="craving_placeholder_name" data-craving-name>Makgeolli</span>
+                <span class="craving_placeholder_end">?</span>
+              </span>
+
+            </div>
 
             <button class="craving_search_button" type="submit" aria-label="Search products">
               <span class="craving_search_icon" aria-hidden="true"></span>
@@ -196,34 +212,6 @@
 
           </form>
 
-
-          <ul class="experience_tags" data-experience-tags>
-
-            <li>
-              <button class="experience_tag" type="button" aria-pressed="false" data-experience="vegan">
-                #Vegan
-              </button>
-            </li>
-
-            <li>
-              <button class="experience_tag" type="button" aria-pressed="false" data-experience="beginner">
-                #Beginner
-              </button>
-            </li>
-
-            <li>
-              <button class="experience_tag" type="button" aria-pressed="false" data-experience="intermediate">
-                #Intermediate
-              </button>
-            </li>
-
-            <li>
-              <button class="experience_tag" type="button" aria-pressed="false" data-experience="advanced">
-                #Advanced
-              </button>
-            </li>
-
-          </ul>
 
         </div>
 
@@ -237,28 +225,27 @@
         <div class="products_container">
 
           <h2 class="product_showcase_title" id="product_showcase_title">
-            MEET YOUR NEW FAVORITE
+            Meet Your New Favorite
           </h2>
 
 
           <ul class="product_category" data-product-category>
 
             <li>
-              <button class="category_button is_active" type="button" aria-pressed="true" data-category="all">
-                ALL
-              </button>
-            </li>
-
-            <li>
-              <button class="category_button" type="button" aria-pressed="false" data-category="makgeolli">
+              <button class="category_button is_active" type="button" aria-pressed="true" data-category="makgeolli">
                 MAKGEOLLI
               </button>
             </li>
 
             <li>
-              <button class="category_button" type="button" aria-pressed="false"
-                data-category="bekseju_yedam">
-                BEKSEJU &amp; YEDAM
+              <button class="category_button" type="button" aria-pressed="false" data-category="bekseju">
+                BEKSEJU
+              </button>
+            </li>
+
+            <li>
+              <button class="category_button" type="button" aria-pressed="false" data-category="yedamcheong">
+                YEDAMCHEONG
               </button>
             </li>
 
@@ -546,7 +533,7 @@
 
             <!-- Bekseju -->
 
-            <li class="product_card product_card_new" style="--product_tone:#C89767" data-category="bekseju_yedam"
+            <li class="product_card product_card_new" style="--product_tone:#C89767" data-category="bekseju"
               data-experience="intermediate" data-product="bekseju" data-figma-node="6021:2012">
 
               <article tabindex="0">
@@ -575,7 +562,7 @@
 
             <!-- Jayang Bekseju -->
 
-            <li class="product_card product_card_new" style="--product_tone:#85858B" data-category="bekseju_yedam"
+            <li class="product_card product_card_new" style="--product_tone:#85858B" data-category="bekseju"
               data-experience="advanced" data-product="jayang_bekseju" data-figma-node="6028:2290">
 
               <article tabindex="0">
@@ -606,7 +593,7 @@
 
             <!-- Kangjang Bekseju -->
 
-            <li class="product_card product_card_new" style="--product_tone:#E6E1D6" data-category="bekseju_yedam"
+            <li class="product_card product_card_new" style="--product_tone:#E6E1D6" data-category="bekseju"
               data-experience="advanced" data-product="kangjang_bekseju" data-figma-node="6028:2295">
 
               <article tabindex="0">
@@ -637,7 +624,7 @@
 
             <!-- Yedam -->
 
-            <li class="product_card product_card_new" style="--product_tone:#BBD782" data-category="bekseju_yedam"
+            <li class="product_card product_card_new" style="--product_tone:#BBD782" data-category="yedamcheong"
               data-experience="intermediate" data-product="yedam" data-figma-node="6021:2024">
 
               <article tabindex="0">

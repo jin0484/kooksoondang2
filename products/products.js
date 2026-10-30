@@ -60,35 +60,25 @@
         document.querySelector('[data-craving-input]');
 
 
-    const cravingPlaceholders = [
-        'What about “Makgeolli”?',
-        'How about “Draft Makgeolli”?',
-        '“Rice Makgeolli” today?',
-        'Craving “Strawberry Makgeolli”?',
-        'How about “Bekseju”?',
-        '“Yedam” today?',
-        'What about “Ryeo Premium Soju”?',
-        'How about “Charmsoon Soju”?'
-    ];
+    /* 시안: "What about Makgeolli ?" (가운데 낱말만 진하게). 낱말은 HTML 에 적힌 그대로 고정함 */
+    const cravingPlaceholder =
+        document.querySelector('[data-craving-placeholder]');
 
 
-    function updateCravingPlaceholder() {
-        if (!searchInput) return;
+    /* 안내 글은 입력창이 비어 있을 때만 보임 */
+    function syncCravingPlaceholder() {
+        if (!cravingPlaceholder || !searchInput) return;
 
-        const index = Math.floor(
-            Math.random() * cravingPlaceholders.length
-        );
-
-        searchInput.placeholder = cravingPlaceholders[index];
+        cravingPlaceholder.hidden =
+            searchInput.value !== '';
     }
 
 
-    updateCravingPlaceholder();
+    syncCravingPlaceholder();
 
-    window.addEventListener('pageshow', (event) => {
-        if (event.persisted) {
-            updateCravingPlaceholder();
-        }
+    window.addEventListener('pageshow', () => {
+        /* 뒤로 가기로 돌아오면 브라우저가 입력 값을 되살릴 수 있음 */
+        syncCravingPlaceholder();
     });
 
 
@@ -129,6 +119,10 @@
 
 
     let isDesktopExpanded = false;
+
+
+    /* 위쪽 탭을 직접 눌러 따로 보는 중에는 VIEW ALL 을 숨김 */
+    let isTabPicked = false;
 
 
     const viewDetailsButton =
@@ -207,7 +201,7 @@
 
 
     const state = {
-        category: 'all',
+        category: 'makgeolli',
         experience: '',
         keyword: ''
     };
@@ -301,6 +295,7 @@
 
 
         if (
+            !state.keyword &&
             state.category &&
             state.category !== 'all' &&
             category !== state.category
@@ -386,7 +381,8 @@
 
 
         if (viewAllWrap) {
-            viewAllWrap.hidden = !isCollapsed;
+            viewAllWrap.hidden =
+                !(desktopQuery.matches && !isDesktopExpanded && !isTabPicked);
         }
 
 
@@ -1757,6 +1753,11 @@
             button.dataset.category || '';
 
 
+        /* 탭으로 돌아오면 "전체 보기" 상태는 풀리고 VIEW ALL 이 다시 나타남 */
+        isDesktopExpanded = false;
+        isTabPicked = true;
+
+
         categoryButtons.forEach(
             (item) => {
 
@@ -1937,6 +1938,9 @@
         if (!searchInput) return;
 
 
+        syncCravingPlaceholder();
+
+
         if (
             searchInput.value !== ''
         ) {
@@ -1995,6 +1999,7 @@
 
         if (searchInput) {
             searchInput.value = '';
+            syncCravingPlaceholder();
         }
 
 
@@ -2046,6 +2051,7 @@
 
         if (searchInput) {
             searchInput.value = '';
+            syncCravingPlaceholder();
         }
 
 
@@ -6149,4 +6155,70 @@ if (cards.length > 1) {
     } else {
         start();
     }
+})();
+
+
+
+/* =========================================================
+   고정 헤더 높이를 CSS 변수(--site_header_h)로 알려 줌
+   배너가 헤더 바로 아래에서 시작하도록 products.css 의 --banner_offset 이 이 값을 씀.
+   헤더 높이는 화면 폭마다 다름(PC 72px / 태블릿 100px / 모바일 66px)이라 CSS 에 고정값을 적지 않고
+   실제 높이를 읽어 옴
+========================================================= */
+
+(() => {
+    const header = document.querySelector('.site_header');
+
+    if (!header) return;
+
+    const root = document.documentElement;
+
+    const update = () => {
+        root.style.setProperty('--site_header_h', `${header.offsetHeight}px`);
+    };
+
+    update();
+
+    window.addEventListener('resize', update, { passive: true });
+    window.addEventListener('load', update);
+
+    // 헤더 크기가 폭 변화 말고 다른 이유(폰트 로딩 등)로 바뀌어도 따라가게 함
+    if (typeof ResizeObserver === 'function') {
+        new ResizeObserver(update).observe(header);
+    }
+})();
+
+
+/* =========================================================
+   배너 윗부분(헤더 자리) 열고 닫기
+   맨 위에서는 배너 윗부분이 헤더 높이만큼 가려져 있다가, 조금이라도 스크롤하면 시간으로 열려 화면을 가득 채움.
+   맨 위로 돌아오면 다시 닫힘. 스크롤 양이 아니라 "맨 위에서 벗어났는가" 만 보므로
+   부드러운 스크롤(lenis)이 끝에서 느려져도 배너는 늦지 않게 따라옴
+========================================================= */
+
+(() => {
+    const banner = document.querySelector('.products_banner');
+
+    if (!banner) return;
+
+    // 이만큼(px) 이상 내려가면 열림, 이 안으로 올라오면 닫힘. 맨 위(0)까지 기다리지 않고 조금 앞에서 닫음
+    const OPEN_AT = 24;
+    const CLOSE_AT = 12;
+
+    let isOpen = null;
+
+    function sync() {
+        const y = window.scrollY;
+        const next = isOpen ? y > CLOSE_AT : y > OPEN_AT;
+
+        if (next === isOpen) return;
+
+        isOpen = next;
+        banner.classList.toggle('is_scrolled', isOpen);
+    }
+
+    window.addEventListener('scroll', sync, { passive: true });
+
+    // 새로고침으로 중간에서 시작했을 때도 맞게
+    sync();
 })();
