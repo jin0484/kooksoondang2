@@ -27,98 +27,28 @@
     background: var(--makgeolli_White);
 }
 
+/* 배너 새로 만드는 중. 피그마 시안 오기 전까지 바탕색 + 노이즈만 둔 빈 배너 */
 .pairing_page .pairing_hero {
     position: relative;
     min-height: clamp(36rem, 45vw, 49rem);
     overflow: hidden;
-    background: #eee1cc url("./pairing_asset/img/hero_pairing.png") center 48% / cover no-repeat;
+    isolation: isolate;
+    background: #fcefe4;
 }
 
-.pairing_page .pairing_hero::before {
+/* 제품 페이지 배너와 같은 그레인 효과 */
+.pairing_page .pairing_hero::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgba(251, 248, 239, 0.97), rgba(251, 248, 239, 0.85) 31%, rgba(251, 248, 239, 0) 68%);
-    pointer-events: none;
-}
-
-.pairing_page .pairing_hero_content {
-    position: relative;
     z-index: 1;
-    width: min(100%, var(--pairing-content-width));
-    margin: 0 auto;
-    padding: clamp(10rem, 12vw, 13rem) clamp(1.5rem, 7.5vw, 9rem) 4rem;
+    pointer-events: none;
+    background: url("./pairing_asset/img/banner/banner_noise.svg") 0 0 / 900px 412px repeat;
+    opacity: 0.15;
 }
-
-.pairing_page .pairing_hero_title {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin: 0;
-    color: #173f2e;
-    font-family: var(--font-Pretendard);
-    font-size: clamp(2rem, 3vw, 3.5rem);
-    line-height: 1.11;
-    letter-spacing: -0.02em;
-}
-
-.pairing_page .pairing_hero_title span {
-    font-weight: 300;
-}
-
-.pairing_page .pairing_hero_title strong {
-    font-size: clamp(5rem, 8.5vw, 10rem);
-    font-weight: 600;
-    letter-spacing: -0.065em;
-    line-height: 1.05;
-}
-
-.pairing_page .pairing_hero_dot { color: var(--pairing-orange); }
-
-.pairing_page .pairing_eyebrow {
-    margin: 0 0 1.125rem;
-    color: var(--pairing-green);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    line-height: 1.6;
-    text-transform: uppercase;
-}
-
-.pairing_page .pairing_hero_actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.pairing_page .pairing_primary_link {
-    display: inline-flex;
-    align-items: center;
-    gap: 2.5rem;
-    min-height: 3.5rem;
-    padding: 0.875rem 1.5rem;
-    border-radius: 0.25rem 0.25rem 1.5rem 0.25rem;
-    background: var(--pairing-green);
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: background 180ms ease, transform 180ms ease;
-}
-.pairing_page .pairing_primary_link:hover { background: #164934; transform: translateY(-2px); }
-.pairing_page .pairing_primary_link span { font-size: 1.5rem; }
-.pairing_page .pairing_hero_note { color: var(--pairing-copy); font-size: 0.8125rem; line-height: 1.5; }
 
 .pairing_page .pairing_section { scroll-margin-top: 6rem; }
 .pairing_page .pairing_drink_finder { background: var(--pairing-paper); }
-
-.pairing_page .pairing_hero_description {
-    margin-top: clamp(1.25rem, 1.354vw, 1.625rem);
-    color: var(--pairing-text);
-    font-size: clamp(1rem, 1.042vw, 1.25rem);
-    line-height: 1.7;
-}
 
 .pairing_page .pairing_section {
     padding: clamp(5rem, 8.333vw, 10rem) 0;
@@ -1426,12 +1356,6 @@
 
     .pairing_page .pairing_hero {
         min-height: clamp(36rem, 54vw, 44rem);
-        background-position: 58% center;
-    }
-
-    .pairing_page .pairing_hero_content {
-        padding-top: clamp(9rem, 13vw, 11rem);
-        padding-left: clamp(2.5rem, 8vw, 6rem);
     }
 
     .pairing_page .pairing_questionnaire {
@@ -1626,30 +1550,7 @@
     }
     .pairing_page .pairing_hero {
         min-height: 40rem;
-        background-color: #fbf7ed;
-        background-size: auto 70%;
-        background-position: 68% bottom;
     }
-    .pairing_page .pairing_hero::before {
-        background: linear-gradient(180deg, #fbf7ed 0%, #fbf7ed 30%, rgba(251, 247, 237, 0.94) 43%, rgba(251, 247, 237, 0.25) 69%, transparent 100%);
-    }
-    .pairing_page .pairing_hero_content {
-        padding: 7.5rem 1.25rem 13rem;
-    }
-    .pairing_page .pairing_hero_title {
-        font-size: clamp(1.75rem, 7.5vw, 2.5rem);
-        line-height: 1.15;
-    }
-    .pairing_page .pairing_hero_title strong { font-size: clamp(4.75rem, 21vw, 7rem); }
-    .pairing_page .pairing_hero_description {
-        max-width: 21rem;
-        font-size: 0.9375rem;
-        line-height: 1.55;
-    }
-    .pairing_page .pairing_hero_actions { margin-top: 1.5rem; gap: 0.75rem; }
-    .pairing_page .pairing_primary_link { min-height: 3.25rem; padding: 0.75rem 1.25rem; }
-    .pairing_page .pairing_hero_note { font-size: 0.75rem; }
-    .pairing_page .pairing_eyebrow { font-size: 0.6875rem; margin-bottom: 0.875rem; }
     .pairing_page .pairing_section { padding-block: clamp(3.75rem, 16vw, 5rem); }
     .pairing_page .pairing_section_heading h2 { font-size: clamp(2rem, 10vw, 2.25rem); }
     .pairing_page .pairing_section_heading p { font-size: 1rem; line-height: 1.6; }
