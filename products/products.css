@@ -5347,9 +5347,14 @@ html.is_type_result_open {
 ========================================================= */
 
 .products_banner {
+  /* 배너는 화면 맨 위부터 맨 아래까지 가득 채움. 첫 화면 아래에 흰 콘텐츠가 살짝 올라와 있는 건
+     배너를 줄여서가 아니라 아래 콘텐츠 층을 위로 끌어올려(.products_banner + .products_content_layer) 배너를 덮게 함 */
   --banner_h: max(100svh, 34rem);
 
-  position: relative;
+  /* 배너는 화면에 고정해 두고, 아래 콘텐츠(.products_content_layer, z-index 50)가 스크롤되면서
+     그 위를 덮고 올라오게 함 */
+  position: sticky;
+  top: 0;
 
   width: 100%;
   height: var(--banner_h);
@@ -5404,6 +5409,12 @@ html.is_type_result_open {
   pointer-events: none;
 }
 
+
+/* 첫 화면 아래에 흰 콘텐츠의 둥근 윗선만 3rem 올라와 있게 함.
+   흰 영역 안 첫 글자(제목)는 맨 위에서 최소 53px 아래에서 시작하므로 이 높이에서는 글자가 보이지 않음 */
+.products_banner + .products_content_layer {
+  margin-top: -3rem;
+}
 
 .banner_shape {
   position: absolute;
@@ -5518,11 +5529,17 @@ html.is_type_result_open {
    판 폭을 화면 폭의 1.75배로 잡아 도형이 더 많이 보이게 함 (위아래 남는 곳은 베이지 바탕) */
 @media (max-width: 767px) {
   .products_banner {
-    --banner_h: clamp(28rem, 75svh, 40rem);
+    --banner_h: max(100svh, 28rem);
   }
 
+  /* 배너가 화면을 가득 채우므로 판도 높이에 맞춰 키움(도형이 가운데 띠에만 몰리지 않게) */
   .products_banner_stage {
-    width: 175vw;
+    width: max(175vw, calc(var(--banner_h) * 1.1));
+  }
+
+  /* 모바일: 흰 영역 제목이 맨 위에서 53px 아래에서 시작하므로 올라오는 높이를 2.5rem(40px) 으로 */
+  .products_banner + .products_content_layer {
+    margin-top: -2.5rem;
   }
 }
 
