@@ -1166,3 +1166,10 @@ section {
     -webkit-user-drag: none;
     cursor: grabbing;
 }
+
+
+/* 제품 카드 이미지가 끌려 나오지 않게 (브라우저 기본 이미지 끌기 방지) */
+.more_products_list img {
+    -webkit-user-drag: none;
+    user-select: none;
+}

@@ -1580,6 +1580,10 @@
     createMobileProductPageSwipe(grid);
 
 
+    /* 제품 이미지를 끌면 이미지만 따로 떨어져 나오는 브라우저 기본 끌기를 모든 화면에서 막음 */
+    grid.addEventListener('dragstart', (event) => event.preventDefault());
+
+
     function renderMobileCarousel(
         visibleCards
     ) {
