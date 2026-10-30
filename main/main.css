@@ -3962,8 +3962,11 @@ section[id] {
 }
 
 /* ---------- hero 버튼: 한 줄 / 두 줄 ---------- */
-/* 두 버튼이 한 줄에 놓이려면 폭이 필요함. 400px 보다 넓으면 한 줄(글자는 줄바꿈 없이),
+/* 두 버튼이 한 줄에 놓이려면 폭이 필요함. 460px 보다 넓으면 한 줄(글자는 줄바꿈 없이),
    그보다 좁아지면 INTRO 위 / TEST START 아래 두 줄로 쌓음.
+   기준을 400px 에서 460px 로 올린 이유: 한 줄일 때 TEST START 가 오른쪽의 주황색 그릇 도형과
+   401~430px 에서 겹치고(실제 도형 모양으로 재 보면 9% -> 0%), 440px 에서도 4px, 460px 에서야 16px 떨어짐.
+   두 줄로 쌓으면 TEST START 가 왼쪽 아래로 가서 도형과 멀어짐(360px 에서 72px).
    .hero_left 폭에 눌려 TEST START 글자가 두 줄로 꺾이던 것도 함께 막음 */
 
 @media (min-width: 30.0625rem) and (max-width: 47.9375rem) {
@@ -3976,7 +3979,7 @@ section[id] {
   }
 }
 
-@media (max-width: 25rem) {
+@media (max-width: 28.75rem) {
   .hero_actions {
     flex-direction: column;
     align-items: flex-start;

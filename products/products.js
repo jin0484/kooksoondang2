@@ -5823,3 +5823,330 @@ if (cards.length > 1) {
   });
 
 })();
+
+
+
+/* =========================================================
+   배너 제목 채우기 (메인 히어로 제목과 같은 방식)
+   페이지에 들어올 때(첫 진입·새로고침) 한 번만 잔이 차오르듯 색이 채워짐.
+   스크롤로 되돌아오거나 hover 해도 다시 재생되지 않음
+========================================================= */
+
+(() => {
+    const title = document.querySelector('.products_banner_title');
+
+    if (!title) return;
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const supportsTextClip = typeof CSS === 'object'
+        && typeof CSS.supports === 'function'
+        && (CSS.supports('background-clip', 'text') || CSS.supports('-webkit-background-clip', 'text'));
+
+    // 오려 내기를 못 하는 환경이거나 모션을 끈 사용자에겐 처음부터 칠해진 글자 그대로 둠
+    if (reducedMotionQuery.matches || !supportsTextClip) return;
+
+    const animationName = 'products_banner_pour';
+    const safetyDelay = 3000;
+    let safetyTimer = 0;
+
+    function finish() {
+        window.clearTimeout(safetyTimer);
+        title.removeEventListener('animationend', handleAnimationEnd);
+        title.classList.remove('is_pour_ready', 'is_pour_running');
+
+        // 아래 부제가 제목이 다 채워진 뒤에 타자로 나오도록 알림 (아래 '배너 부제 타자 효과')
+        window.dispatchEvent(new Event('productsBannerTitleDone'));
+    }
+
+    function handleAnimationEnd(event) {
+        if (event.animationName !== animationName) return;
+
+        finish();
+    }
+
+    title.classList.add('is_pour_ready');
+    title.addEventListener('animationend', handleAnimationEnd);
+    // 애니메이션이 끝내 재생되지 않아도 글자가 투명한 채로 남지 않도록
+    safetyTimer = window.setTimeout(finish, safetyDelay);
+
+    // 대기 상태가 한 프레임 그려진 뒤라야 처음부터 재생됨
+    window.requestAnimationFrame(() => title.classList.add('is_pour_running'));
+})();
+
+
+
+/* =========================================================
+   배너 도형 흔들림 (메인 페이지 히어로의 data-momentum 과 같은 방식)
+
+   도형 위로 커서가 지나가면 그 속도·방향만큼 도형이 밀려났다가 스프링으로 출렁이며 제자리로 돌아옴.
+   가장자리를 스칠수록 많이 돌고, 가운데를 곧장 지나면 덜 돎.
+   마우스가 있는 PC 에서만, 동작 줄이기 설정이면 켜지 않음.
+   (큰 얼룩 세 개는 배경 질감이라 제외. 작은 도형일수록 더 많이 움직임)
+========================================================= */
+
+(() => {
+    const banner = document.querySelector('.products_banner');
+    const stage = banner && banner.querySelector('.products_banner_stage');
+
+    if (!stage) return;
+
+    const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // 커서 속도(px/s)를 도형의 처음 속도로 환산하는 배율. 메인 페이지와 같은 값
+    const THROW_SCALE = 0.32;
+    const SPIN_SCALE = 0.16;
+    const MAX_THROW = 1600;
+    const MAX_SPIN = 320;
+    // 제자리로 돌아오는 스프링. stiffness 가 클수록 빨리, damping 이 클수록 덜 출렁임
+    const STIFFNESS = 130;
+    const DAMPING = 15;
+    const REST_EPSILON = 0.08;
+
+    const clamp = (value, limit) => Math.min(Math.max(value, -limit), limit);
+    const isEnabled = () => hoverQuery.matches && !reducedMotionQuery.matches;
+
+    const lookup = new Map();
+    const items = [];
+
+    // 기존 transform(CSS 의 기울기)을 지우지 않고 그 위에 흔들림을 얹어야 제자리에서 돎.
+    // 이동은 화면 기준으로 가야 하므로 translate 를 맨 앞(바깥쪽)에 둠
+    function captureBase(item) {
+        item.element.style.transform = '';
+
+        const base = window.getComputedStyle(item.element).transform;
+
+        item.base = base && base !== 'none' ? `${base} ` : '';
+    }
+
+    function render(item) {
+        if (!item.x && !item.y && !item.rotation) {
+            item.element.style.transform = '';
+            return;
+        }
+
+        item.element.style.transform =
+            `translate(${item.x.toFixed(2)}px, ${item.y.toFixed(2)}px) ${item.base}rotate(${item.rotation.toFixed(2)}deg)`;
+    }
+
+    function rest(item) {
+        item.awake = false;
+        item.x = 0;
+        item.y = 0;
+        item.rotation = 0;
+        item.velocityX = 0;
+        item.velocityY = 0;
+        item.velocityRotation = 0;
+        render(item);
+    }
+
+    // 작은 도형일수록 가볍게 날아가도록 폭에 따라 세기를 정함
+    function strengthOf(element) {
+        const width = element.getBoundingClientRect().width || 1;
+
+        return Math.min(Math.max(320 / width, 0.35), 1);
+    }
+
+    banner.querySelectorAll('.banner_shape:not(.banner_shape_multiply)').forEach((element) => {
+        const item = {
+            element,
+            base: '',
+            x: 0,
+            y: 0,
+            rotation: 0,
+            velocityX: 0,
+            velocityY: 0,
+            velocityRotation: 0,
+            awake: false
+        };
+
+        captureBase(item);
+        lookup.set(element, item);
+        items.push(item);
+    });
+
+    if (!items.length) return;
+
+    let frame = 0;
+    let lastTime = 0;
+
+    function step(time) {
+        frame = 0;
+
+        const delta = lastTime ? Math.min((time - lastTime) / 1000, 0.04) : 1 / 60;
+
+        lastTime = time;
+
+        let awake = 0;
+
+        items.forEach((item) => {
+            if (!item.awake) return;
+
+            item.velocityX += (-STIFFNESS * item.x - DAMPING * item.velocityX) * delta;
+            item.velocityY += (-STIFFNESS * item.y - DAMPING * item.velocityY) * delta;
+            item.velocityRotation += (-STIFFNESS * item.rotation - DAMPING * item.velocityRotation) * delta;
+            item.x += item.velocityX * delta;
+            item.y += item.velocityY * delta;
+            item.rotation += item.velocityRotation * delta;
+
+            const settled = Math.abs(item.x) < REST_EPSILON && Math.abs(item.velocityX) < REST_EPSILON
+                && Math.abs(item.y) < REST_EPSILON && Math.abs(item.velocityY) < REST_EPSILON
+                && Math.abs(item.rotation) < REST_EPSILON && Math.abs(item.velocityRotation) < REST_EPSILON;
+
+            if (settled) {
+                rest(item);
+                return;
+            }
+
+            awake += 1;
+            render(item);
+        });
+
+        if (awake) frame = window.requestAnimationFrame(step);
+        else lastTime = 0;
+    }
+
+    function wake() {
+        if (frame) return;
+
+        lastTime = 0;
+        frame = window.requestAnimationFrame(step);
+    }
+
+    let pointerX = 0;
+    let pointerY = 0;
+    let pointerTime = 0;
+    let velocityX = 0;
+    let velocityY = 0;
+    let entered = null;
+
+    banner.addEventListener('mousemove', (event) => {
+        const elapsed = event.timeStamp - pointerTime;
+
+        if (pointerTime && elapsed > 0) {
+            // 순간 속도는 튀기 쉬워서 지수 평활로 다듬음
+            const instantX = ((event.clientX - pointerX) / elapsed) * 1000;
+            const instantY = ((event.clientY - pointerY) / elapsed) * 1000;
+
+            velocityX = velocityX * 0.55 + instantX * 0.45;
+            velocityY = velocityY * 0.55 + instantY * 0.45;
+        }
+
+        pointerX = event.clientX;
+        pointerY = event.clientY;
+        pointerTime = event.timeStamp;
+    }, { passive: true });
+
+    // 도형 위로 처음 들어온 순간에만 던짐. 버블링되는 mouseover 로 위임 처리
+    stage.addEventListener('mouseover', (event) => {
+        const target = event.target instanceof Element
+            ? event.target.closest('.banner_shape')
+            : null;
+
+        if (target === entered) return;
+
+        entered = target;
+
+        const item = target && lookup.get(target);
+
+        if (!item || !isEnabled()) return;
+
+        const bounds = target.getBoundingClientRect();
+        const offsetX = event.clientX - (bounds.left + bounds.width / 2);
+        const offsetY = event.clientY - (bounds.top + bounds.height / 2);
+        // 중심 오프셋과 커서 속도의 2D 외적이 회전의 방향과 세기가 됨.
+        // 가장자리를 스칠수록 크게 돌고 중앙을 곧장 지나면 거의 돌지 않음
+        const cross = offsetX * velocityY - offsetY * velocityX;
+        const distance = Math.hypot(offsetX, offsetY) || 1;
+        const strength = strengthOf(target);
+
+        item.velocityX = clamp(velocityX * THROW_SCALE * strength, MAX_THROW * strength);
+        item.velocityY = clamp(velocityY * THROW_SCALE * strength, MAX_THROW * strength);
+        item.velocityRotation = clamp((cross / distance) * SPIN_SCALE * strength, MAX_SPIN * strength);
+        item.awake = true;
+        wake();
+    });
+
+    banner.addEventListener('mouseleave', () => {
+        entered = null;
+    });
+
+    // 끌어 놓으면 이미지만 따로 떨어져 나오는 브라우저 기본 동작 막기
+    stage.addEventListener('dragstart', (event) => event.preventDefault());
+
+    // 화면 크기가 바뀌면 CSS 기울기 값(기준 transform)도 달라질 수 있어 다시 읽음
+    let resizeTimer = 0;
+
+    window.addEventListener('resize', () => {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(() => {
+            items.forEach((item) => {
+                rest(item);
+                captureBase(item);
+            });
+            wake();
+        }, 150);
+    }, { passive: true });
+
+    // 켜질 때만 도형이 커서를 받도록 함 (터치 기기에서는 가로막지 않게)
+    function syncEnabled() {
+        banner.classList.toggle('is_banner_playful', isEnabled());
+    }
+
+    syncEnabled();
+
+    [hoverQuery, reducedMotionQuery].forEach((query) => {
+        if (query.addEventListener) query.addEventListener('change', syncEnabled);
+        else query.addListener(syncEnabled);
+    });
+})();
+
+
+/* =========================================================
+   배너 부제 나타나기
+   제목이 다 채워진 뒤, 부제 문장이 아래에서 살짝 올라오며 부드럽게 나타남.
+   제목 효과가 없는 환경(모션 줄이기·오려 내기 미지원)이면 효과 없이 처음부터 그대로 보임
+========================================================= */
+
+(() => {
+    const sub = document.querySelector('.products_banner_sub');
+
+    if (!sub) return;
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // 모션을 끈 사용자에겐 그대로 둠
+    if (reducedMotionQuery.matches) return;
+
+    // 제목이 다 채워진 뒤 한 박자 쉬고 시작
+    const START_GAP = 150;
+
+    sub.classList.add('is_reveal_ready');
+
+    let started = false;
+
+    function start() {
+        if (started) return;
+
+        started = true;
+        window.removeEventListener('productsBannerTitleDone', onTitleDone);
+
+        // 대기 상태가 한 프레임 그려진 뒤라야 transition 이 걸림
+        window.requestAnimationFrame(() => sub.classList.add('is_reveal_running'));
+    }
+
+    function onTitleDone() {
+        window.setTimeout(start, START_GAP);
+    }
+
+    const title = document.querySelector('.products_banner_title');
+    const titleIsPouring = title && title.classList.contains('is_pour_ready');
+
+    if (titleIsPouring) {
+        window.addEventListener('productsBannerTitleDone', onTitleDone);
+        // 제목 쪽 신호가 끝내 오지 않아도 부제가 영영 안 보이는 일이 없게 함
+        window.setTimeout(start, 6000);
+    } else {
+        start();
+    }
+})();
