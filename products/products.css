@@ -856,7 +856,7 @@ html {
 
   gap:
     0.75rem
-    clamp(0.75rem, 2.083vw, 2.5rem);
+    20px;
 
   margin-top:
     clamp(1.5rem, 2.083vw, 2.5rem);
@@ -2608,7 +2608,7 @@ html {
     margin-top: clamp(3.75rem, 14.6vw, 5rem);
   }
 
-  .product_category:not(.is_open) li:not(:has(.is_active)) {
+  .product_category:has(.is_active):not(.is_open) li:not(:has(.is_active)) {
     display: none;
   }
 

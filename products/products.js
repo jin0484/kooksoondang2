@@ -201,7 +201,7 @@
 
 
     const state = {
-        category: 'makgeolli',
+        category: 'all',
         experience: '',
         keyword: ''
     };
@@ -1730,12 +1730,13 @@
         if (!button) return;
 
 
-        /* 모바일에서는 선택된 버튼이 카테고리 펼치기 버튼을 겸함. */
+        /* 모바일에서는 선택된 버튼이 카테고리 펼치기 버튼을 겸함. 펼친 상태에서 다시 누르면 선택 취소 */
         if (
             mobileCarouselQuery.matches &&
-            button.classList.contains('is_active')
+            button.classList.contains('is_active') &&
+            !isCategoryMenuOpen
         ) {
-            setCategoryMenuOpen(!isCategoryMenuOpen);
+            setCategoryMenuOpen(true);
             return;
         }
 
@@ -1749,13 +1750,20 @@
         }
 
 
+        /* 선택된 탭을 다시 누르면 선택이 풀리고 전체 제품으로 돌아감 */
+        const isDeselect =
+            button.classList.contains('is_active');
+
+
         state.category =
-            button.dataset.category || '';
+            isDeselect
+                ? 'all'
+                : (button.dataset.category || '');
 
 
         /* 탭으로 돌아오면 "전체 보기" 상태는 풀리고 VIEW ALL 이 다시 나타남 */
         isDesktopExpanded = false;
-        isTabPicked = true;
+        isTabPicked = !isDeselect;
 
 
         categoryButtons.forEach(
@@ -1763,7 +1771,7 @@
 
                 setPressed(
                     item,
-                    item === button
+                    !isDeselect && item === button
                 );
 
             }
