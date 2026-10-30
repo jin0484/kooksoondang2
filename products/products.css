@@ -818,7 +818,7 @@ html {
 
   padding-block:
     clamp(3rem, 7.3vw, 8.75rem)
-    clamp(4rem, 6.25vw, 7.5rem);
+    clamp(6rem, 12vw, 14rem);
 
   text-align: center;
 
@@ -832,7 +832,7 @@ html {
     var(--PC-Display3_48B);
 
   font-size:
-    clamp(1.5rem, 2.083vw, 2.5rem);
+    clamp(1.75rem, 2.708vw, 3.25rem);
 
   font-weight: 500;
 
@@ -1424,7 +1424,7 @@ html {
 
   align-items: center;
 
-  gap: 5px;
+  gap: clamp(0.75rem, 0.9vw, 1.125rem);
 
   padding:
     0.25rem 0.5rem;
@@ -1467,31 +1467,35 @@ html {
 .view_all_chevron {
   display: block;
 
-  /* 시안(icon_down2) 58 x 40px (1920px 기준). 색은 시안의 #8D7E77 */
-  width: clamp(2.5rem, 3.02vw, 3.625rem);
-  aspect-ratio: 58 / 40;
+  /* 배너의 스크롤 화살표와 같은 그림(가로로 늘리지 않음). 색은 #8D7E77 */
+  width: clamp(1.125rem, 1.1vw, 1.375rem);
+  aspect-ratio: 39 / 45.8691;
 
   background:
     var(--bekseju_dark3, #8d7e77);
 
   -webkit-mask:
-    url('products_asset/icon/view_all_chevron.svg')
-    no-repeat center / 100% 100%;
+    url('products_asset/banner/scroll_arrow.svg')
+    no-repeat center / contain;
 
   mask:
-    url('products_asset/icon/view_all_chevron.svg')
-    no-repeat center / 100% 100%;
+    url('products_asset/banner/scroll_arrow.svg')
+    no-repeat center / contain;
 
   transform: translateY(0);
 
   transition:
-    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.3s ease;
 }
 
 
-/* VIEW ALL 호버 시 화살표 아래로 이동 */
+/* VIEW ALL 호버 시 화살표 아래로 이동 + 주황색 */
 .view_all_button:hover
 .view_all_chevron {
+  background:
+    var(--kooksoondang_orange);
+
   transform:
     translateY(12px);
 }
