@@ -95,6 +95,7 @@
         { title: 'Bossam', description: '(Boiled Pork Wraps)', tag: 'Rich · Savory', image: 'card/popular_bossam.jpg', imagePosition: '50% 50%' },
         { title: 'Dakgalbi', description: '(Spicy Stir-Fried Chicken)', tag: 'Spicy · Fresh', image: 'card/popular_dakgalbi.jpg', imagePosition: '50% 50%' },
         { title: 'Margherita Pizza', description: '(Italian)', tag: 'Savory · Tangy', image: 'card/Margherita Pizza.jpg', imagePosition: '50% 50%' },
+        { title: 'Buffalo Wings', description: '(American)', tag: 'Spicy · Savory', image: 'card/world_buffalo_wings.jpg', imagePosition: '50% 45%' },
         { title: 'Jamón with Melon', description: '(Spanish)', tag: 'Sweet · Salty', image: 'card/popular_jamon_with_melon.jpg', imagePosition: '50% 50%' }
     ];
 
@@ -114,9 +115,9 @@
             time: '2 min',
             image: 'Makgeolli Highball.png',
             icons: recipeIconSet,
-            ingredients: ['Makgeolli 120 ml', 'Sparkling water 100 ml', 'Lemon juice 10 ml', 'Ice cubes', 'Lemon slice'],
+            ingredients: ['120 ml (4 oz) Makgeolli', '100 ml (3.4 oz) Sparkling Water', '10 ml (0.3 oz) Lemon Juice', 'Ice Cubes'],
             steps: ['Fill a highball glass with ice.', 'Pour in makgeolli and lemon juice.', 'Top with sparkling water.', 'Stir gently and garnish with lemon.'],
-            tip: 'Adjust the sparkle to your taste with extra soda water.'
+            tip: ['Garnish with a thin lemon slice.', 'Adjust the sparkle to your taste with extra soda water.']
         },
         {
             id: 'strawberry-makgeolli',
