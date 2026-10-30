@@ -95,6 +95,7 @@
         { title: 'Bossam', description: '(Boiled Pork Wraps)', tag: 'Rich · Savory', image: 'card/popular_bossam.jpg', imagePosition: '50% 50%' },
         { title: 'Dakgalbi', description: '(Spicy Stir-Fried Chicken)', tag: 'Spicy · Fresh', image: 'card/popular_dakgalbi.jpg', imagePosition: '50% 50%' },
         { title: 'Margherita Pizza', description: '(Italian)', tag: 'Savory · Tangy', image: 'card/Margherita Pizza.jpg', imagePosition: '50% 50%' },
+        { title: 'Buffalo Wings', description: '(American)', tag: 'Spicy · Savory', image: 'card/world_buffalo_wings.jpg', imagePosition: '50% 45%' },
         { title: 'Jamón with Melon', description: '(Spanish)', tag: 'Sweet · Salty', image: 'card/popular_jamon_with_melon.jpg', imagePosition: '50% 50%' }
     ];
 
