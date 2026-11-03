@@ -21,8 +21,13 @@ html {
 
   overflow-x: clip;
 
-  /* 바탕은 배너 바탕과 같은 색: 흰 콘텐츠 윗모서리가 둥글어서, 그 모서리 뒤로 보이는 색이 배너와 이어져야 배너 아래가 잘려 보이지 않음 */
-  background: var(--makgeolli_light2, #f6f0ec);
+  /* 맨 위 헤더 높이만큼(배너가 clip-path 로 가려 둔 자리)은 원래의 흰 바탕색, 그 아래는 배너 바탕색.
+     흰 콘텐츠 윗모서리가 둥글어서 그 모서리 뒤로 보이는 색이 배너와 이어져야 배너 아래가 잘려 보이지 않음 */
+  background:
+    linear-gradient(
+      var(--makgeolli_light4) 0 var(--site_header_h, 72px),
+      var(--makgeolli_light2, #f6f0ec) var(--site_header_h, 72px)
+    );
 
   color: var(--bekseju_darker_cold);
 }
@@ -5612,6 +5617,12 @@ html.is_type_result_open {
     --banner_h: calc(100vw * 500 / 360);
   }
 
+  /* 문구 묶음은 헤더 높이를 빼지 않고 배너 전체의 한가운데에 둠 (시안에서도 문구가 프레임 정가운데).
+     PC 는 헤더 높이만큼 아래로 내려 보이는 영역의 가운데에 두던 방식 그대로 */
+  .products_banner_copy {
+    padding-top: 2rem;
+  }
+
   /* 모바일 시안(피그마 curation 6166:3071, 360 x 500). 도형은 각자 style 의 모바일 값(--mx --my --mw --mr)을 씀.
      판 폭은 화면 폭에 맞추고, 높이는 배너 높이만큼 늘려(도형 크기는 그대로, 간격만 벌어짐) 위아래에 빈 띠가 안 생기게 함.
      화면이 낮아도 시안 높이의 85% 밑으로는 눌리지 않음 */
@@ -5829,6 +5840,11 @@ html.is_type_result_open {
     align-items: flex-start;
   }
 
+  /* 문구 묶음은 헤더 높이를 빼지 않고 배너 전체의 한가운데에 둠 (시안에서도 문구가 프레임 정가운데) */
+  .products_banner_copy {
+    padding-top: 2rem;
+  }
+
   .products_banner_stage {
     width: max(100%, calc(var(--banner_h) * 768 / 1084));
 
@@ -5845,8 +5861,35 @@ html.is_type_result_open {
 
     transform: var(--tr, none);
   }
-}
 
+  /* 아래쪽 도형(왼쪽 큰 그릇·잔 카드·병들)을 조금 위로: 화면이 낮아 아래가 잘릴 때 더 보이도록.
+     transform 과 따로 합쳐지는 translate 속성이라 기울기·마우스 흔들림과 겹치지 않음. 되돌리려면 이 규칙만 지우면 됨 */
+  .banner_shape[src*='union_a'],
+  .banner_shape[src*='best_bottle'] {
+    translate: 0 -11vw;
+  }
+
+  /* 오른쪽 아래 갈색 병은 조금 더 올림 */
+  .banner_shape[src*='brand_history_pet'] {
+    translate: 0 -15vw;
+  }
+
+  /* 왼쪽 위 갈색 도형과 그 뒤의 하얀 병은 같이 위·왼쪽 바깥으로, 왼쪽 가운데 선 도형은 왼쪽 바깥으로 조금 뺌 */
+  .banner_shape[src*='subtract_a'],
+  .banner_shape[src*='banner_bottle'] {
+    translate: -4vw -4vw;
+  }
+
+  .banner_shape[src*='best_cup.svg'] {
+    translate: -6vw 0;
+  }
+
+  /* 하얀 카드와 잔은 한 묶음이라 같이, 위의 도형들보다 더 올림 */
+  .banner_shape[src*='subtract_b'],
+  .banner_shape[src*='best_cup2'] {
+    translate: 0 -19vw;
+  }
+}
 
 /* =========================================================
    배너 아래쪽 스크롤 표시 (ABOUT BRAND 페이지 .intro_arrow 와 같은 크기·위치·움직임)
@@ -5857,8 +5900,10 @@ html.is_type_result_open {
   position: absolute;
 
   left: 50%;
-  /* About Brand 와 같은 위치 (배너 아래가 화면 아래와 같음) */
-  bottom: clamp(2.5rem, 9.26vh, 6.25rem);
+  /* About Brand 와 같은 위치 (배너 아래가 화면 아래와 같음).
+     배너가 화면보다 높을 때(모바일·태블릿에서 폭에 맞춰 길어진 배너)는 배너 아래가 화면 밖이라 화살표도 같이 밖으로
+     빠졌음. 그래서 배너 아래 끝과 첫 화면 아래 끝 중 위에 있는 쪽에서 재서, 늘 첫 화면 안에 보이게 함 */
+  top: calc(min(var(--banner_h), 100svh) - clamp(2.5rem, 9.26vh, 6.25rem));
 
   z-index: 3;
 
@@ -5866,7 +5911,7 @@ html.is_type_result_open {
 
   width: clamp(1.5rem, 1.82vw, 2.1875rem);
 
-  transform: translateX(-50%);
+  transform: translate(-50%, -100%);
 }
 
 .products_banner_arrow img {
