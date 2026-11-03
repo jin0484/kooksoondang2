@@ -21,7 +21,8 @@ html {
 
   overflow-x: clip;
 
-  background: var(--makgeolli_light4);
+  /* 바탕은 배너 바탕과 같은 색: 흰 콘텐츠 윗모서리가 둥글어서, 그 모서리 뒤로 보이는 색이 배너와 이어져야 배너 아래가 잘려 보이지 않음 */
+  background: var(--makgeolli_light2, #f6f0ec);
 
   color: var(--bekseju_darker_cold);
 }
@@ -5605,14 +5606,60 @@ html.is_type_result_open {
 /* 모바일: 판 높이를 따로 맞추면 가운데만 크게 잘려 도형이 거의 안 보이므로,
    판 폭을 화면 폭의 1.75배로 잡아 도형이 더 많이 보이게 함 (위아래 남는 곳은 베이지 바탕) */
 @media (max-width: 767px) {
-  /* 모바일도 같은 기준: 높이는 화면 높이 (윗부분 헤더 높이만큼은 clip-path 로 가림) */
+  /* 모바일 배너 높이는 시안(360 x 500)의 비율 그대로: 폭 360px 에서 500px. 화면 높이를 채우지 않으므로
+     배너 바로 아래부터 제품 영역이 이어짐 (윗부분 헤더 높이만큼은 clip-path 로 가림) */
   .products_banner {
-    --banner_h: max(100svh, 28rem);
+    --banner_h: calc(100vw * 500 / 360);
   }
 
-  /* 배너가 화면을 가득 채우므로 판도 높이에 맞춰 키움(도형이 가운데 띠에만 몰리지 않게) */
+  /* 모바일 시안(피그마 curation 6166:3071, 360 x 500). 도형은 각자 style 의 모바일 값(--mx --my --mw --mr)을 씀.
+     판 폭은 화면 폭에 맞추고, 높이는 배너 높이만큼 늘려(도형 크기는 그대로, 간격만 벌어짐) 위아래에 빈 띠가 안 생기게 함.
+     화면이 낮아도 시안 높이의 85% 밑으로는 눌리지 않음 */
   .products_banner_stage {
-    width: max(175vw, calc(var(--banner_h) * 1.1));
+    width: 100%;
+
+    height: max(var(--banner_h), calc(100vw * 500 / 360 * 0.85));
+
+    aspect-ratio: auto;
+  }
+
+  .banner_shape {
+    top: var(--my);
+    left: var(--mx);
+
+    width: var(--mw);
+
+    transform: var(--mr, none);
+  }
+
+  .products_banner {
+    align-items: flex-start;
+  }
+
+  /* 시안: 문구 묶음 사이 20.8px, 제목 두 줄 사이 5.5px, 줄 안 단어 사이 4.2px (360px 기준, 폭에 비례) */
+  .products_banner_copy {
+    gap: 5.76vw;
+  }
+
+  .products_banner_title {
+    gap: 1.54vw;
+  }
+
+  .products_banner_line {
+    gap: 1.15vw;
+  }
+
+  /* 시안: Albert Sans 30px / 손글씨체 38px / 부제 11px (360px 기준). 768px 태블릿 시안 값(63.4px)과 이어지는 비율 */
+  .products_banner_plain {
+    font-size: clamp(1.6rem, 8.33vw, 3.9616rem);
+  }
+
+  .products_banner_hand {
+    font-size: calc(clamp(1.6rem, 8.33vw, 3.9616rem) * 1.2667);
+  }
+
+  .products_banner_sub {
+    font-size: clamp(0.6875rem, 3.06vw, 1.4741rem);
   }
 
 }
@@ -5732,22 +5779,71 @@ html.is_type_result_open {
 
 
 /* =========================================================
-   배너 문구 - 태블릿(768 ~ 1279px) 글자 크기
-   ABOUT BRAND 타이틀(aboutbrand.css 의 .intro_title, 같은 768 ~ 1279px 구간)과 같은 크기로 줄임.
-   손글씨체는 시안 비율(110 / 86 = 1.279배)을 그대로 유지, 부제도 같은 비율로 줄임
+   배너 문구 - 태블릿 ~ 작은 PC(768 ~ 1279px) 글자 크기·간격
+   768px 의 시안 값(피그마 curation 6163:2990)에서 1280px 의 PC 값까지 clamp 로 끊김 없이 이어짐.
+   (1279 → 1280 에서 갑자기 작아지거나 커지지 않게, 두 지점을 직선으로 이은 식)
+     Albert Sans   63.4px (768) → 86px (1280)       손글씨체는 그 1.279 배 (110 / 86)
+     부제          23.6px (768) → 32px (1280)
+     묶음 간격     44px → 40px / 제목 줄 간격 11.8px → 10.7px / 단어 간격 8.8px → 8px
 ========================================================= */
 
 @media (min-width: 768px) and (max-width: 1279px) {
+  .products_banner_copy {
+    gap: clamp(2.5rem, 3.156rem - 0.82vw, 2.76rem);
+  }
+
+  .products_banner_title {
+    gap: clamp(0.6667rem, 0.8438rem - 0.22vw, 0.7375rem);
+  }
+
+  .products_banner_line {
+    gap: clamp(0.5rem, 0.6313rem - 0.165vw, 0.5528rem);
+  }
+
   .products_banner_plain {
-    font-size: clamp(2.5rem, 6.8vw, 3.25rem);
+    font-size: clamp(3.9616rem, 1.8438rem + 4.41vw, 5.375rem);
   }
 
   .products_banner_hand {
-    font-size: calc(clamp(2.5rem, 6.8vw, 3.25rem) * 1.279);
+    font-size: calc(clamp(3.9616rem, 1.8438rem + 4.41vw, 5.375rem) * 1.279);
   }
 
   .products_banner_sub {
-    font-size: clamp(1rem, 2.5vw, 1.625rem);
+    font-size: clamp(1.4741rem, 0.6875rem + 1.64vw, 2rem);
+  }
+}
+
+
+/* =========================================================
+   배너 - 태블릿(768 ~ 1024px) 시안 (피그마 curation 6163:2990, 768 x 1084)
+   도형은 PC 시안과 같은 그림이지만 자리·기울기가 달라서, 각 도형의 style 에 적어 둔
+   태블릿 값(--tx --ty --tw --tr)을 이 구간에서만 씀 (PC·모바일은 --x --y --w --r 그대로).
+   글자 크기·간격은 아래가 아니라 위의 "768 ~ 1279px 글자 크기·간격" 블록에서 정함
+========================================================= */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* 판 위를 배너 위에 맞춰서 위쪽 도형(헤더와 겹치는 부분)이 시안 캡처와 같은 자리에 오게 함.
+     화면이 시안(1084px)보다 낮으면 판 높이를 시안의 85% 까지만 눌러(도형 크기는 그대로, 간격만 좁아짐)
+     아래쪽 도형이 너무 많이 잘리지 않게 하고, 그래도 남는 만큼만 아래가 잘림 */
+  .products_banner {
+    align-items: flex-start;
+  }
+
+  .products_banner_stage {
+    width: max(100%, calc(var(--banner_h) * 768 / 1084));
+
+    height: max(var(--banner_h), calc(max(100vw, var(--banner_h) * 768 / 1084) * 1084 / 768 * 0.85));
+
+    aspect-ratio: auto;
+  }
+
+  .banner_shape {
+    top: var(--ty);
+    left: var(--tx);
+
+    width: var(--tw);
+
+    transform: var(--tr, none);
   }
 }
 
