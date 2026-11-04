@@ -1844,6 +1844,14 @@ html {
 }
 
 
+/* 호버하면 병이 떠오르고 마우스를 따라 움직이는데(products.js), 카드 밖으로 빠져나가 옆 카드·글자 위에 겹쳤음.
+   그림이 놓이는 칸(.starter_kit_visual)의 오려 내기 영역을 카드 안쪽 끝(칸 둘레 여백)까지만 넓혀서 카드 밖으로는 안 보이게 함.
+   % 는 칸 크기 기준이라 카드가 커지고 작아져도 같이 맞음 (아래쪽은 글자 영역을 가리지 않게 거의 칸 끝까지만) */
+.starter_kit_visual {
+  clip-path: inset(-18% -5% -3% -5%);
+}
+
+
 .starter_kit_splash {
   position: absolute;
 
@@ -5995,4 +6003,12 @@ html.is_type_result_open {
 
 .product_soon_tip[hidden] {
   display: none;
+}
+
+
+/* 모바일 카드는 안쪽 여백이 작아서(칸 위 17px / 옆 14px) 오려 내는 여유도 작게 */
+@media (max-width: 767px) {
+  .starter_kit_visual {
+    clip-path: inset(-8% -6% -3% -6%);
+  }
 }
