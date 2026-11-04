@@ -3468,9 +3468,7 @@ html.is_type_result_open {
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
 
-  box-shadow:
-    0 6px 20px
-    rgba(0, 0, 0, 0.18);
+  box-shadow: none;
 
   font:
     600

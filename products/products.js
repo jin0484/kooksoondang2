@@ -6214,17 +6214,49 @@ if (cards.length > 1) {
 
 
 /* =========================================================
-   상세 페이지가 없는 제품 카드: 마우스를 올리면 커서 옆에 안내 문구를 띄움
-   (카드 안에 .product_link 가 없는 카드가 대상. 링크가 생기면 자동으로 안 뜸)
-   마우스가 있는 환경에서만, 카드 위를 벗어나면 사라짐
+   상세 페이지가 없는 제품 카드 안내 (카드 안에 .product_link 가 없는 카드가 대상. 링크가 생기면 자동으로 안 뜸)
+   - 마우스가 있는 환경(PC): 올리면 커서 옆에 문구를 띄우고, 카드 위를 벗어나면 사라짐
+   - 손가락으로 누르는 환경(태블릿·모바일): 누르면 화면 아래에 작은 안내(.coming_soon_toast)를 잠깐 띄움
 ========================================================= */
 
 (() => {
     const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
-    if (!hoverQuery.matches) return;
-
     const MESSAGE = 'Coming soon';
+
+    function cardWithoutLink(target) {
+        if (!(target instanceof Element)) return null;
+
+        const card = target.closest('.product_card');
+
+        return card && !card.querySelector('.product_link') ? card : null;
+    }
+
+    if (!hoverQuery.matches) {
+        const toast = document.querySelector('[data-coming-soon-toast]');
+
+        if (!toast) return;
+
+        let toastTimer = 0;
+
+        document.addEventListener('click', (event) => {
+            if (!cardWithoutLink(event.target)) return;
+
+            window.clearTimeout(toastTimer);
+
+            // aria-live 가 다시 읽도록 한 번 비웠다가 넣음
+            toast.textContent = '';
+            toast.textContent = MESSAGE;
+            toast.classList.add('is_visible');
+
+            toastTimer = window.setTimeout(() => {
+                toast.classList.remove('is_visible');
+            }, 1800);
+        });
+
+        return;
+    }
+
     const OFFSET_X = 16;
     const OFFSET_Y = 20;
 
@@ -6237,14 +6269,6 @@ if (cards.length > 1) {
     document.body.appendChild(tip);
 
     let activeCard = null;
-
-    function cardWithoutLink(target) {
-        if (!(target instanceof Element)) return null;
-
-        const card = target.closest('.product_card');
-
-        return card && !card.querySelector('.product_link') ? card : null;
-    }
 
     function place(event) {
         // 화면 오른쪽·아래 끝에서 잘리지 않게 반대쪽으로 접음
