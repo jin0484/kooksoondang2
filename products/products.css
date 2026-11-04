@@ -5381,17 +5381,21 @@ html.is_type_result_open {
 
   /* 제목은 두 줄에 들어가도록 오른쪽 여백을 좁히고 글자를 조금 줄임 */
   .product_grid .product_card > article .product_name {
-    margin-top: 0.5rem;
+    /* 해시태그가 빠져 남는 아래쪽 빈 곳까지 글이 차지하도록, 글 묶음을 이미지 아래~카드 아래 사이의 한가운데에 둠
+       (위·아래 자동 여백. 위쪽 0.5rem 은 이미지와 붙지 않게 하는 최소 간격) */
+    margin-block: auto;
+    padding-top: 0.5rem;
     /* 첫 줄이 길어도(KOREAN GINSENG 등) 두 줄에 들어오도록 오른쪽 여백은 최소로 둠.
        오른쪽 아래 화살표는 마지막 줄(짧은 단어)과 겹치지 않는지 확인함 */
-    padding-inline: 0.25rem;
-    /* 화살표(2rem)가 커져서 긴 첫 줄(KOREAN GINSENG 등)과도 닿으므로,
-       글을 위로 올려 화살표가 마지막 줄(짧은 단어)과만 같은 높이에 오게 함 */
-    padding-bottom: 1.25rem;
+    padding-inline: 0.125rem;
+    /* 화살표(2rem)는 오른쪽 아래에 있고 마지막 줄은 짧은 단어라 서로 닿지 않음. 예전의 아래 여백은 뺌 */
+    padding-bottom: 0;
 
-    /* 해시태그가 빠진 만큼 제목을 키움 (0.8125rem → 최대 0.9375rem).
-       폭에 비례해 줄어들어 320~600px 어디서나 모든 제품명이 두 줄에 들어옴 */
-    font-size: clamp(0.75rem, 3.7vw, 0.9375rem);
+    /* 해시태그가 빠진 만큼 제목을 더 키우고 줄 간격도 넓혀 해시태그 자리까지 글이 차지하게 함.
+       가장 긴 줄(KOREAN GINSENG)이 한 줄에 들어오는 한계가 폭의 약 4.0% 라서 3.95vw 로 잡음
+       (320~767px 어디서나 모든 제품명이 두 줄에 들어옴. 넓은 화면은 1.125rem 에서 멈춤) */
+    font-size: clamp(0.78rem, 3.95vw, 1.125rem);
+    line-height: 1.45;
   }
 
 
