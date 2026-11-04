@@ -30,7 +30,7 @@
 /* 배너 새로 만드는 중. 피그마 시안 오기 전까지 바탕색 + 노이즈만 둔 빈 배너 */
 .pairing_page .pairing_hero {
     position: relative;
-    min-height: clamp(36rem, 45vw, 49rem);
+    min-height: 100vh;
     overflow: hidden;
     isolation: isolate;
     background: #fcefe4;
@@ -1354,10 +1354,6 @@
         padding-block: clamp(3.5rem, 6vw, 5rem);
     }
 
-    .pairing_page .pairing_hero {
-        min-height: clamp(36rem, 54vw, 44rem);
-    }
-
     .pairing_page .pairing_questionnaire {
         --pairing-question-tab-width: clamp(4.25rem, 7.25vw, 5.5rem);
         width: min(92%, 58rem);
@@ -1547,9 +1543,6 @@
     .pairing_page {
         --pairing-content-inset: 1.25rem;
         --pairing-heading-inset: 0;
-    }
-    .pairing_page .pairing_hero {
-        min-height: 40rem;
     }
     .pairing_page .pairing_section { padding-block: clamp(3.75rem, 16vw, 5rem); }
     .pairing_page .pairing_section_heading h2 { font-size: clamp(2rem, 10vw, 2.25rem); }
