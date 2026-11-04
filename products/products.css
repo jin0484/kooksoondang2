@@ -1000,6 +1000,12 @@ html {
 }
 
 
+/* 상세 페이지 링크(.product_link)가 없는 카드는 눌러도 갈 곳이 없으므로 손가락 커서를 쓰지 않음 */
+.product_card:not(:has(.product_link)) {
+  cursor: default;
+}
+
+
 .product_card[hidden] {
   display: none;
 }
@@ -1442,8 +1448,7 @@ html {
   font:
     var(--PC-Body_Large_20SB);
 
-  font-size:
-    clamp(1rem, 1.25vw, 1.5rem);
+  font-size: 1rem;
 
   font-weight: 400;
 
@@ -1836,6 +1841,14 @@ html {
 
   aspect-ratio:
     1 / 0.95;
+}
+
+
+/* 호버하면 병이 떠오르고 마우스를 따라 움직이는데(products.js), 카드 밖으로 빠져나가 옆 카드·글자 위에 겹쳤음.
+   그림이 놓이는 칸(.starter_kit_visual)의 오려 내기 영역을 카드 안쪽 끝(칸 둘레 여백)까지만 넓혀서 카드 밖으로는 안 보이게 함.
+   % 는 칸 크기 기준이라 카드가 커지고 작아져도 같이 맞음 (아래쪽은 글자 영역을 가리지 않게 거의 칸 끝까지만) */
+.starter_kit_visual {
+  clip-path: inset(-18% -5% -3% -5%);
 }
 
 
@@ -2867,7 +2880,7 @@ html {
   }
 
   .view_all_button {
-    font-size: 0.8rem;
+    font-size: 1rem;
   }
 
   .starter_kit {
@@ -3463,9 +3476,7 @@ html.is_type_result_open {
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
 
-  box-shadow:
-    0 6px 20px
-    rgba(0, 0, 0, 0.18);
+  box-shadow: none;
 
   font:
     600
@@ -5378,17 +5389,21 @@ html.is_type_result_open {
 
   /* 제목은 두 줄에 들어가도록 오른쪽 여백을 좁히고 글자를 조금 줄임 */
   .product_grid .product_card > article .product_name {
-    margin-top: 0.5rem;
+    /* 해시태그가 빠져 남는 아래쪽 빈 곳까지 글이 차지하도록, 글 묶음을 이미지 아래~카드 아래 사이의 한가운데에 둠
+       (위·아래 자동 여백. 위쪽 0.5rem 은 이미지와 붙지 않게 하는 최소 간격) */
+    margin-block: auto;
+    padding-top: 0.5rem;
     /* 첫 줄이 길어도(KOREAN GINSENG 등) 두 줄에 들어오도록 오른쪽 여백은 최소로 둠.
        오른쪽 아래 화살표는 마지막 줄(짧은 단어)과 겹치지 않는지 확인함 */
-    padding-inline: 0.25rem;
-    /* 화살표(2rem)가 커져서 긴 첫 줄(KOREAN GINSENG 등)과도 닿으므로,
-       글을 위로 올려 화살표가 마지막 줄(짧은 단어)과만 같은 높이에 오게 함 */
-    padding-bottom: 1.25rem;
+    padding-inline: 0.125rem;
+    /* 화살표(2rem)는 오른쪽 아래에 있고 마지막 줄은 짧은 단어라 서로 닿지 않음. 예전의 아래 여백은 뺌 */
+    padding-bottom: 0;
 
-    /* 해시태그가 빠진 만큼 제목을 키움 (0.8125rem → 최대 0.9375rem).
-       폭에 비례해 줄어들어 320~600px 어디서나 모든 제품명이 두 줄에 들어옴 */
-    font-size: clamp(0.75rem, 3.7vw, 0.9375rem);
+    /* 해시태그가 빠진 만큼 제목을 더 키우고 줄 간격도 넓혀 해시태그 자리까지 글이 차지하게 함.
+       가장 긴 줄(KOREAN GINSENG)이 한 줄에 들어오는 한계가 폭의 약 4.0% 라서 3.95vw 로 잡음
+       (320~767px 어디서나 모든 제품명이 두 줄에 들어옴. 넓은 화면은 1.125rem 에서 멈춤) */
+    font-size: clamp(0.78rem, 3.95vw, 1.125rem);
+    line-height: 1.45;
   }
 
 
@@ -5950,5 +5965,50 @@ html.is_type_result_open {
 @media (prefers-reduced-motion: reduce) {
   .products_banner {
     transition: none;
+  }
+}
+
+
+/* =========================================================
+   상세 페이지 없는 카드에 마우스를 올리면 커서 옆에 뜨는 안내 (products.js "상세 페이지가 없는 제품 카드")
+========================================================= */
+
+.product_soon_tip {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  z-index: 9999;
+
+  max-width: 16rem;
+
+  padding: 0.5rem 0.875rem;
+
+  border-radius: 0.5rem;
+
+  background: var(--bekseju_dark1, #272625);
+
+  font-family: var(--font-Albert_Sans, 'Albert Sans', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.3;
+
+  color: #fff;
+
+  white-space: nowrap;
+
+  pointer-events: none;
+}
+
+.product_soon_tip[hidden] {
+  display: none;
+}
+
+
+/* 모바일 카드는 안쪽 여백이 작아서(칸 위 17px / 옆 14px) 오려 내는 여유도 작게 */
+@media (max-width: 767px) {
+  .starter_kit_visual {
+    clip-path: inset(-8% -6% -3% -6%);
   }
 }

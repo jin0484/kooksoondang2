@@ -6211,3 +6211,97 @@ if (cards.length > 1) {
     // 새로고침으로 중간에서 시작했을 때도 맞게
     sync();
 })();
+
+
+/* =========================================================
+   상세 페이지가 없는 제품 카드 안내 (카드 안에 .product_link 가 없는 카드가 대상. 링크가 생기면 자동으로 안 뜸)
+   - 마우스가 있는 환경(PC): 올리면 커서 옆에 문구를 띄우고, 카드 위를 벗어나면 사라짐
+   - 손가락으로 누르는 환경(태블릿·모바일): 누르면 화면 아래에 작은 안내(.coming_soon_toast)를 잠깐 띄움
+========================================================= */
+
+(() => {
+    const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+    const MESSAGE = 'Coming soon';
+
+    function cardWithoutLink(target) {
+        if (!(target instanceof Element)) return null;
+
+        const card = target.closest('.product_card');
+
+        return card && !card.querySelector('.product_link') ? card : null;
+    }
+
+    if (!hoverQuery.matches) {
+        const toast = document.querySelector('[data-coming-soon-toast]');
+
+        if (!toast) return;
+
+        let toastTimer = 0;
+
+        document.addEventListener('click', (event) => {
+            if (!cardWithoutLink(event.target)) return;
+
+            window.clearTimeout(toastTimer);
+
+            // aria-live 가 다시 읽도록 한 번 비웠다가 넣음
+            toast.textContent = '';
+            toast.textContent = MESSAGE;
+            toast.classList.add('is_visible');
+
+            toastTimer = window.setTimeout(() => {
+                toast.classList.remove('is_visible');
+            }, 1800);
+        });
+
+        return;
+    }
+
+    const OFFSET_X = 16;
+    const OFFSET_Y = 20;
+
+    const tip = document.createElement('div');
+
+    tip.className = 'product_soon_tip';
+    tip.setAttribute('role', 'tooltip');
+    tip.hidden = true;
+    tip.textContent = MESSAGE;
+    document.body.appendChild(tip);
+
+    let activeCard = null;
+
+    function place(event) {
+        // 화면 오른쪽·아래 끝에서 잘리지 않게 반대쪽으로 접음
+        const width = tip.offsetWidth;
+        const height = tip.offsetHeight;
+        let x = event.clientX + OFFSET_X;
+        let y = event.clientY + OFFSET_Y;
+
+        if (x + width > window.innerWidth - 8) x = event.clientX - width - OFFSET_X;
+        if (y + height > window.innerHeight - 8) y = event.clientY - height - OFFSET_Y;
+
+        tip.style.transform = `translate(${Math.max(8, x)}px, ${Math.max(8, y)}px)`;
+    }
+
+    document.addEventListener('mousemove', (event) => {
+        const card = cardWithoutLink(event.target);
+
+        if (card !== activeCard) {
+            activeCard = card;
+            tip.hidden = !card;
+        }
+
+        if (card) place(event);
+    }, { passive: true });
+
+    document.addEventListener('mouseleave', () => {
+        activeCard = null;
+        tip.hidden = true;
+    });
+
+    // 스크롤로 카드가 커서 밑에서 빠져나가도 마우스가 안 움직이면 이벤트가 없으므로 같이 닫음
+    window.addEventListener('scroll', () => {
+        activeCard = null;
+        tip.hidden = true;
+    }, { passive: true });
+})();
